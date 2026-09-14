@@ -1,0 +1,77 @@
+﻿datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum LicenseTier {
+  FREE
+  PRO
+  VIP
+}
+
+enum PaymentStatus {
+  PENDING
+  SUCCESS
+  FAILED
+  EXPIRED
+}
+
+model User {
+  id            String         @id @default(uuid())
+  email         String         @unique
+  passwordHash  String
+  name          String?
+  role          String         @default("user")
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+
+  license       License?
+  sessions      Session[]
+  transactions  Transaction[]
+}
+
+model License {
+  id              String       @id @default(uuid())
+  userId          String       @unique
+  user            User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tier            LicenseTier  @default(FREE)
+  maxCuts         Int          @default(5)
+  canThrottle     Boolean      @default(false)
+  canGateway      Boolean      @default(false)
+  canAutoreblock  Boolean      @default(false)
+  canArsenal      Boolean      @default(false)
+  expiresAt       DateTime?
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+}
+
+model Session {
+  id            String       @id @default(uuid())
+  userId        String
+  user          User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  sessionId     String       @unique
+  platform      String?
+  appVersion    String?
+  lastSeenAt    DateTime     @default(now())
+  createdAt     DateTime     @default(now())
+
+  @@index([userId])
+}
+
+model Transaction {
+  id            String         @id @default(uuid())
+  userId        String
+  user          User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  orderId       String         @unique
+  grossAmount   Int
+  targetTier    LicenseTier
+  durationDays  Int
+  status        PaymentStatus  @default(PENDING)
+  paymentType   String?
+  paidAt        DateTime?
+  createdAt     DateTime       @default(now())
+}

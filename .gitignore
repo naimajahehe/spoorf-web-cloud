@@ -1,0 +1,45 @@
+﻿# ==========================================
+# Spoorf Web Cloud — Git Ignore Rules
+# ==========================================
+
+# 1. Environment Variables & Secrets
+.env
+.env.*
+!.env.example
+*.env
+
+# 2. Asymmetric Cryptography Keys (Private Key MUST NEVER BE COMMITTED!)
+keys/license-private.pem
+**/keys/*.pem
+**/keys/*.key
+*.pem
+*.key
+
+# 3. Dependencies
+node_modules/
+**/node_modules/
+.pnpm-store/
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
+
+# 4. Compiled Output
+dist/
+**/dist/
+build/
+**/build/
+.cache/
+*.tsbuildinfo
+
+# 5. Logs & System Files
+*.log
+logs/
+**/logs/
+.DS_Store
+Thumbs.db
+Desktop.ini
+.idea/
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
