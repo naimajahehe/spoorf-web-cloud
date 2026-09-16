@@ -6,8 +6,9 @@ declare global {
 }
 
 export function createPrismaClient(urlOverride?: string): PrismaClient {
+  const effectiveUrl = urlOverride || (process.env.NODE_ENV === 'test' && process.env.TEST_DATABASE_URL ? process.env.TEST_DATABASE_URL : undefined);
   return new PrismaClient({
-    datasources: urlOverride ? { db: { url: urlOverride } } : undefined,
+    datasources: effectiveUrl ? { db: { url: effectiveUrl } } : undefined,
     log: process.env.NODE_ENV === 'development'
       ? ['warn', 'error']
       : ['error'],

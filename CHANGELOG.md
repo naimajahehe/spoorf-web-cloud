@@ -2,6 +2,36 @@
 
 All notable changes to the Spoorf Cloud ecosystem will be documented in this file.
 
+## [v0.0.3] - 2026-09-16
+
+### Enterprise Core Auth API & Desktop Bridge Layer
+- **Architecture & Master Operational Standard**:
+  - Established `AGENTS.md` in repository root as the non-negotiable architectural master rulebook.
+  - Authored comprehensive `docs/API_SPEC.md` documenting REST contracts, error envelopes, and request/response models.
+- **Fail-Fast Environment Validation (`src/config/env.ts`)**:
+  - Implemented schema-driven environment bootstrapping via Zod (`PORT`, `DATABASE_URL`, `JWT_KEYS`, `CLIENT_URL`).
+- **Structured JSON Logging & Observability (`src/utils/logger.ts`)**:
+  - Lightweight zero-dependency JSON logger with correlation `requestId` tracing.
+  - Recursive sensitive-field masking (`password`, `token`, `authorization`, `secret`).
+- **Centralized Typed Error Handling & Validation**:
+  - Created `src/errors/AppError.ts` hierarchy (`BadRequestError`, `UnauthorizedError`, `ForbiddenError`, `NotFoundError`, `ConflictError`, `SessionRevokedError`, `TooManyRequestsError`).
+  - Added centralized Express error handler (`src/middlewares/errorHandler.ts`) mapping Zod validation, Prisma P2002/P2025, and custom app errors into uniform JSON envelopes.
+  - Implemented Zod schema validation middleware (`validateBody`, `validateQuery`, `validateParams`).
+- **Security & Rate Limiting**:
+  - Implemented in-memory sliding-window rate limiters (`src/middlewares/rateLimiter.ts`) protecting authentication endpoints.
+  - Hardened CORS exact-origin checks and Helmet security headers.
+  - RS256 Bearer token authentication guard (`src/middlewares/authGuard.ts`) and RBAC role checks (`requireRole`).
+- **Core Business Logic (`src/services/authService.ts`)**:
+  - `register`: atomic user creation + default Free tier license assignment.
+  - `login`: 100% desktop contract parity with `licenseManager.ts` (Zero-HWID `sessionId` extraction, password verification, RS256 signing).
+  - `Concurrent Session Control (Kick Mechanism)`: enforces slot limits (Free: 1, Pro: 2, VIP: 5), revoking oldest sessions with educational feedback.
+  - `sessionHeartbeat`: extends 7-day grace period and detects kicked sessions.
+  - `redeemLicenseKey`: atomic voucher key validation and tier upgrade.
+- **Automated Verification**:
+  - Added `tests/unit_auth_service.test.ts` (7/7 tests passing).
+  - Added `tests/e2e_auth_api.test.ts` (9/9 tests passing).
+  - Total automated test count: **29 / 29 tests passing (100% green)**.
+
 ## [v0.0.2] - 2026-09-16
 
 ### PostgreSQL Database Infrastructure & Enriched Prisma Schema
