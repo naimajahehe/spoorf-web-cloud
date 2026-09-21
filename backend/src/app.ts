@@ -3,6 +3,8 @@ import helmet from 'helmet';
 import cors from 'cors';
 import crypto from 'node:crypto';
 import authRoutes from './routes/authRoutes';
+import sessionRoutes from './routes/sessionRoutes';
+import downloadRoutes from './routes/downloadRoutes';
 import { errorHandler } from './middlewares/errorHandler';
 import { NotFoundError } from './errors/AppError';
 import { pingDatabase } from './config/database';
@@ -74,6 +76,10 @@ export function createApp(): express.Application {
   // 6. API Routing
   app.use('/v1/auth', authRoutes);
   app.use('/api/v1/auth', authRoutes); // Alias for flexible client routing
+  app.use('/v1/sessions', sessionRoutes);
+  app.use('/api/v1/sessions', sessionRoutes);
+  app.use('/v1/download', downloadRoutes);
+  app.use('/api/v1/download', downloadRoutes);
 
   // 7. 404 Handler
   app.use((req: Request, _res: Response, next: NextFunction) => {
