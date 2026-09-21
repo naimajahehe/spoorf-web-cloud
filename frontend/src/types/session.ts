@@ -2,9 +2,9 @@ export interface DeviceSession {
   id: string;
   userId: string;
   sessionId: string;
-  deviceName: string;
-  platform: string;
-  appVersion: string;
+  deviceName: string | null;
+  platform: string | null;
+  appVersion: string | null;
   ipAddress: string | null;
   isRevoked: boolean;
   revokedAt: string | null;
