@@ -182,4 +182,46 @@ describe('AuthService Unit & Business Logic Suite', () => {
     assert.equal(updatedLicense.can_gateway, true);
     assert.equal(updatedLicense.can_deep_fingerprint, true);
   });
+
+  test('8. Multi-user device handover: login with existing device sessionId reassigns session to new user', async () => {
+    const emailUser1 = `handover_user1_${Date.now()}@spoorf.app`;
+    const emailUser2 = `handover_user2_${Date.now()}@spoorf.app`;
+    const pwd = 'Password123!';
+    const sharedHwid = `device_hwid_${Date.now()}`;
+
+    // Register User 1 and User 2
+    const u1 = await authService.register({ email: emailUser1, password: pwd, name: 'User One' });
+    const u2 = await authService.register({ email: emailUser2, password: pwd, name: 'User Two' });
+
+    // User 1 logs in with device HWID
+    await authService.login({
+      email: emailUser1,
+      password: pwd,
+      session_id: sharedHwid,
+      deviceName: 'Office PC',
+      platform: 'win32',
+    });
+
+    // Check that session is owned by User 1
+    let sessionRecord = await prismaTest.session.findUnique({ where: { sessionId: sharedHwid } });
+    assert.ok(sessionRecord);
+    assert.equal(sessionRecord.userId, u1.user.id);
+
+    // Now User 2 logs in on that exact SAME device
+    await authService.login({
+      email: emailUser2,
+      password: pwd,
+      session_id: sharedHwid,
+      deviceName: 'Office PC Naim',
+      platform: 'win32',
+    });
+
+    // Session record MUST be reassigned to User 2
+    sessionRecord = await prismaTest.session.findUnique({ where: { sessionId: sharedHwid } });
+    assert.ok(sessionRecord);
+    assert.equal(sessionRecord.userId, u2.user.id, 'Session userId must be updated to new logged in user');
+
+    // Clean up
+    await prismaTest.user.deleteMany({ where: { email: { in: [emailUser1, emailUser2] } } });
+  });
 });

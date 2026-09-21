@@ -228,6 +228,7 @@ export class AuthService {
       await this.db.session.upsert({
         where: { sessionId: clientSessionId },
         update: {
+          userId: user.id, // Reassign to current authenticated user upon device login
           isRevoked: false,
           revokedAt: null,
           revokedReason: null,
@@ -316,7 +317,10 @@ export class AuthService {
       if (session) {
         await this.db.session.update({
           where: { id: session.id },
-          data: { lastSeenAt: new Date() },
+          data: {
+            userId,
+            lastSeenAt: new Date(),
+          },
         });
       }
     }
