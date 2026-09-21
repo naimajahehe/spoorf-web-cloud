@@ -99,7 +99,7 @@ export class SessionService {
       data: {
         isRevoked: true,
         revokedAt: new Date(),
-        revokedReason: 'Dicabut secara manual oleh pengguna melalui Web Dashboard',
+        revokedReason: 'Dicabut massal oleh pengguna melalui Web Dashboard',
       },
     });
 
