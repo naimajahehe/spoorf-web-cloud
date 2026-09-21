@@ -26,24 +26,34 @@ export const DashboardPage: React.FC = () => {
   const [targetToRevoke, setTargetToRevoke] = useState<DeviceSession | null>(null);
   const [isRevokeAllOpen, setIsRevokeAllOpen] = useState<boolean>(false);
 
-  const fetchSessions = async () => {
+  const fetchSessions = async (isMountedRef?: { current: boolean }) => {
     setIsLoading(true);
     try {
       const data = await sessionService.getSessions();
-      setSessions(data.sessions || []);
+      if (!isMountedRef || isMountedRef.current) {
+        setSessions(data.sessions || []);
+      }
     } catch (err: any) {
-      const errorMessage =
-        err.response?.data?.error?.message ||
-        err.response?.data?.message ||
-        'Gagal memuat sesi perangkat.';
-      setFeedback({ type: 'error', message: errorMessage });
+      if (!isMountedRef || isMountedRef.current) {
+        const errorMessage =
+          err.response?.data?.error?.message ||
+          err.response?.data?.message ||
+          'Gagal memuat sesi perangkat.';
+        setFeedback({ type: 'error', message: errorMessage });
+      }
     } finally {
-      setIsLoading(false);
+      if (!isMountedRef || isMountedRef.current) {
+        setIsLoading(false);
+      }
     }
   };
 
   useEffect(() => {
-    fetchSessions();
+    const isMountedRef = { current: true };
+    fetchSessions(isMountedRef);
+    return () => {
+      isMountedRef.current = false;
+    };
   }, []);
 
   // Auto-dismiss feedback toast after 5 seconds
@@ -232,7 +242,7 @@ export const DashboardPage: React.FC = () => {
           <div className="flex items-center gap-3">
             <button
               type="button"
-              onClick={fetchSessions}
+              onClick={() => fetchSessions()}
               disabled={isLoading}
               className="p-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl transition-colors disabled:opacity-50 cursor-pointer focus:outline-none"
               title="Refresh Sesi"
@@ -254,7 +264,12 @@ export const DashboardPage: React.FC = () => {
         </div>
 
         {/* Sessions Grid */}
-        {sessions.length === 0 ? (
+        {isLoading ? (
+          <div className="flex flex-col items-center justify-center py-16 text-slate-400 font-mono">
+            <RefreshCw className="w-8 h-8 text-cyan-400 animate-spin mb-3" />
+            <p className="text-xs uppercase tracking-widest text-slate-500">Memuat Sesi Perangkat...</p>
+          </div>
+        ) : sessions.length === 0 ? (
           <div className="text-center py-12 text-slate-500 font-mono text-sm">
             <Laptop className="w-12 h-12 mx-auto mb-3 opacity-30 text-slate-400" />
             <p>Belum ada sesi desktop yang terdaftar.</p>
