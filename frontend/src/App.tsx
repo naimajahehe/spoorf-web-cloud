@@ -39,9 +39,10 @@ export const App: React.FC = () => {
               }
             />
             <Route path="/download" element={<DownloadPage />} />
-            {/* Fallback to root */}
-            <Route path="*" element={<Navigate to="/" replace />} />
           </Route>
+
+          {/* Wildcard fallback to root */}
+          <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </AuthProvider>
     </BrowserRouter>

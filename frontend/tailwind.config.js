@@ -20,6 +20,10 @@ export default {
           dark: '#0d0c11',
           muted: 'rgba(45, 42, 58, 0.65)',
         },
+        muted: {
+          DEFAULT: 'rgba(45, 42, 58, 0.65)',
+          foreground: 'rgba(45, 42, 58, 0.65)',
+        },
         surface: {
           card: '#ffffff',
           muted: '#eae9e5',

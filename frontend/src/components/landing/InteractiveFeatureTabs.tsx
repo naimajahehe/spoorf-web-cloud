@@ -124,10 +124,13 @@ export const InteractiveFeatureTabs: React.FC = () => {
             const isActive = idx === activeTab;
             const Icon = tab.icon;
             return (
-              <div
+              <button
+                type="button"
+                role="tab"
+                aria-selected={isActive}
                 key={tab.id}
                 onClick={() => handleSelectTab(idx)}
-                className={`p-5 rounded-2xl border transition-all cursor-pointer select-none text-left relative overflow-hidden ${
+                className={`w-full p-5 rounded-2xl border transition-all cursor-pointer select-none text-left relative overflow-hidden focus:outline-none focus-visible:ring-2 focus-visible:ring-brand ${
                   isActive
                     ? 'bg-white border-brand/40 shadow-panel'
                     : 'bg-white/60 border-border hover:bg-white/90 shadow-sm'
@@ -162,7 +165,7 @@ export const InteractiveFeatureTabs: React.FC = () => {
                 </div>
 
                 <p className="text-xs text-ink/70 leading-relaxed">{tab.description}</p>
-              </div>
+              </button>
             );
           })}
         </div>
