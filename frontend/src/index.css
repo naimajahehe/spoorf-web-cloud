@@ -1,3 +1,79 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer utilities {
+  .bg-grid-paper {
+    background-image: linear-gradient(90deg, rgba(45, 42, 58, 0.06) 1px, transparent 1px),
+      linear-gradient(rgba(45, 42, 58, 0.06) 1px, transparent 1px);
+    background-size: 104px 104px;
+  }
+
+  .texture-wash-mint {
+    background-color: #e4f2ee;
+    background-image: radial-gradient(56% 70% at 18% 30%, rgba(110, 200, 182, 0.45), transparent 70%),
+      radial-gradient(48% 62% at 78% 22%, rgba(168, 220, 232, 0.5), transparent 72%),
+      radial-gradient(60% 80% at 60% 85%, rgba(90, 175, 170, 0.32), transparent 70%);
+  }
+
+  .texture-wash-brand {
+    background-color: #4a26d4;
+    background-image: radial-gradient(55% 70% at 20% 25%, rgba(140, 108, 255, 0.55), transparent 70%),
+      radial-gradient(50% 65% at 80% 30%, rgba(96, 52, 235, 0.6), transparent 72%),
+      radial-gradient(65% 85% at 55% 90%, rgba(52, 22, 150, 0.55), transparent 75%);
+  }
+}
+
+@keyframes wander-x {
+  0% {
+    transform: translate3d(-4px, 0, 0);
+  }
+  100% {
+    transform: translate3d(4px, 0, 0);
+  }
+}
+
+@keyframes wander-y {
+  0% {
+    transform: translate3d(0, -5px, 0);
+  }
+  100% {
+    transform: translate3d(0, 5px, 0);
+  }
+}
+
+.wander-x {
+  animation: wander-x 9s ease-in-out infinite alternate;
+}
+
+.wander-y {
+  animation: wander-y 12s ease-in-out infinite alternate;
+}
+
+@keyframes status-pulse {
+  0% {
+    opacity: 0.7;
+    transform: scale(1);
+  }
+  70% {
+    opacity: 0;
+    transform: scale(2.4);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(2.4);
+  }
+}
+
+.status-pulse {
+  position: relative;
+}
+
+.status-pulse::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 9999px;
+  background-color: currentColor;
+  animation: status-pulse 2.5s ease-out infinite;
+}
