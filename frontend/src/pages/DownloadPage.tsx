@@ -106,7 +106,7 @@ export const DownloadPage: React.FC = () => {
   };
 
   const handleDownload = () => {
-    const rawBase = api.defaults.baseURL || 'http://localhost:4000/v1';
+    const rawBase = api.defaults.baseURL || '';
     const serverOrigin = rawBase.replace(/\/v1\/?$/, '');
     const downloadUrl = release.downloadUrl.startsWith('http')
       ? release.downloadUrl

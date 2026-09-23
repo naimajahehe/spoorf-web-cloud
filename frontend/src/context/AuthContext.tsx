@@ -1,5 +1,7 @@
 import React, { createContext, useContext, useState, useEffect, useCallback, useMemo } from 'react';
+import axios from 'axios';
 import api from '../services/api';
+import { getWebSessionPayload } from '../services/webSession';
 import { UserProfile, LicenseInfo, AuthResponse } from '../types/auth';
 
 export interface AuthContextType {
@@ -122,11 +124,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const login = useCallback(
     async (email: string, password: string): Promise<void> => {
-      const response = await api.post<AuthResponse>('/auth/login', { email, password });
+      const response = await api.post<AuthResponse>('/auth/login', { email, password, ...getWebSessionPayload() });
       const { token: newToken, user: rawUser, license: rawLicense } = response.data;
 
       const parsedUser = parseUserProfile(rawUser);
-      const parsedLicense = parseLicenseInfo(rawLicense, rawUser?.role);
+      const parsedLicense = parseLicenseInfo(rawLicense);
 
       localStorage.setItem(TOKEN_KEY, newToken);
       localStorage.setItem(USER_KEY, JSON.stringify(parsedUser));
@@ -141,7 +143,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const register = useCallback(
     async (email: string, password: string, name?: string): Promise<void> => {
-      const payload: { email: string; password: string; name?: string } = { email, password };
+      const payload: { email: string; password: string; name?: string } = { email, password, ...getWebSessionPayload() };
       if (name) payload.name = name;
 
       const response = await api.post<AuthResponse>('/auth/register', payload);
@@ -193,6 +195,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           localStorage.setItem(LICENSE_KEY, JSON.stringify(parsedLicense));
         }
       } catch (error) {
+        // Keep the cached session on network/server errors; only a rejected token logs out.
+        if (!axios.isAxiosError(error) || error.response?.status !== 401) {
+          console.warn('[AuthContext] Gagal memverifikasi sesi, memakai data tersimpan:', error);
+          return;
+        }
         console.error('[AuthContext] Sesi kedaluwarsa atau token tidak valid:', error);
         localStorage.removeItem(TOKEN_KEY);
         localStorage.removeItem(USER_KEY);

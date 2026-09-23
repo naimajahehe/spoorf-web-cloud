@@ -12,7 +12,7 @@ export const Navbar: React.FC = () => {
     navigate('/login');
   };
 
-  const rawTier = license?.tier || user?.role || 'free';
+  const rawTier = license?.tier || 'free';
   const tier = rawTier.toUpperCase();
 
   const getTierBadgeStyle = (tierName: string) => {

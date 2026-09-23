@@ -1,6 +1,10 @@
 import axios, { AxiosError, InternalAxiosRequestConfig } from 'axios';
 
-const baseURL = import.meta.env.VITE_API_URL || 'http://localhost:4000/v1';
+// Dev falls back to the local API; production builds use VITE_API_URL or a same-origin /v1 proxy.
+const baseURL = import.meta.env.VITE_API_URL || (import.meta.env.DEV ? 'http://localhost:4000/v1' : '/v1');
+
+// Routes whose content requires a session; a 401 elsewhere (landing, download) must not redirect.
+const PROTECTED_PATH_PREFIXES = ['/dashboard'];
 
 export const api = axios.create({
   baseURL,
@@ -31,11 +35,11 @@ api.interceptors.response.use(
     if (error.response && error.response.status === 401) {
       localStorage.removeItem('spoorf_cloud_token');
       localStorage.removeItem('spoorf_cloud_user');
+      localStorage.removeItem('spoorf_cloud_license');
 
       if (
         typeof window !== 'undefined' &&
-        !window.location.pathname.startsWith('/login') &&
-        !window.location.pathname.startsWith('/register')
+        PROTECTED_PATH_PREFIXES.some((prefix) => window.location.pathname.startsWith(prefix))
       ) {
         window.location.href = '/login';
       }
