@@ -1,24 +1,25 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Shield, ArrowRight, Download } from 'lucide-react';
+import { BrandMark } from '../ui/BrandMark';
 
 export const LandingFooter: React.FC = () => {
   return (
-    <footer className="pt-20 pb-12 px-4 sm:px-6 max-w-7xl mx-auto border-t border-border/80">
+    <footer className="pt-20 pb-12 px-4 sm:px-6 max-w-7xl mx-auto border-t border-border">
       {/* Closing CTA Card */}
-      <div className="texture-wash-brand border border-border/80 rounded-3xl p-10 sm:p-14 text-center max-w-5xl mx-auto shadow-panel relative overflow-hidden mb-20">
+      <div className="texture-wash-brand rounded-3xl p-10 sm:p-14 text-center max-w-5xl mx-auto shadow-panel relative overflow-hidden mb-20">
         <div className="relative z-10 max-w-2xl mx-auto">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/80 border border-brand/20 text-brand text-xs font-mono tracking-wider uppercase mb-5">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/90 text-brand text-xs font-mono tracking-wider uppercase mb-5">
             <Shield className="w-3.5 h-3.5" />
             <span>Autonomous L2 Defense</span>
           </div>
 
-          <h2 className="text-3xl sm:text-5xl font-sans font-bold tracking-tight text-foreground leading-[1.15] mb-5">
+          <h2 className="text-3xl sm:text-5xl font-sans font-bold tracking-tight text-white leading-[1.15] mb-5">
             Take full command of your Layer 2{' '}
-            <span className="font-serif italic font-normal text-brand">perimeter</span>.
+            <span className="font-serif italic font-normal text-white/85">perimeter</span>.
           </h2>
 
-          <p className="text-muted text-sm sm:text-base leading-relaxed mb-8">
+          <p className="text-white/80 text-sm sm:text-base leading-relaxed mb-8">
             Deploy the Spoorf Sentinel agent on your local machine or launch the Cloud Console
             to synchronize, monitor, and enforce access across your distributed fleet.
           </p>
@@ -26,38 +27,31 @@ export const LandingFooter: React.FC = () => {
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4">
             <Link
               to="/register"
-              className="w-full sm:w-auto px-7 py-3.5 rounded-full bg-brand hover:bg-brand-hover text-white text-xs sm:text-sm font-semibold shadow-brand-glow flex items-center justify-center gap-2 transition-all duration-200"
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-full px-6 py-3 text-sm font-semibold bg-white text-brand hover:bg-white/90 shadow-sm transition-all active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60 focus-visible:ring-offset-2 focus-visible:ring-offset-brand-hover"
             >
               <span>Launch Cloud Console</span>
               <ArrowRight className="w-4 h-4" />
             </Link>
             <Link
               to="/download"
-              className="w-full sm:w-auto px-7 py-3.5 rounded-full bg-white hover:bg-slate-50 text-foreground border border-border text-xs sm:text-sm font-semibold shadow-sm flex items-center justify-center gap-2 transition-all duration-200"
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-full px-6 py-3 text-sm font-semibold border border-white/40 text-white hover:bg-white/10 transition-all active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60 focus-visible:ring-offset-2 focus-visible:ring-offset-brand-hover"
             >
-              <Download className="w-4 h-4 text-muted" />
+              <Download className="w-4 h-4" />
               <span>Download Desktop Agent</span>
             </Link>
           </div>
 
-          <div className="mt-5 text-[11px] font-mono text-muted">
+          <div className="mt-5 text-[11px] font-mono text-white/70">
             Zero-HWID architecture · 100% Free tier available · Instant setup
           </div>
         </div>
       </div>
 
       {/* Main Footer Links & Meta */}
-      <div className="grid grid-cols-2 md:grid-cols-5 gap-8 pb-12 border-b border-border/70">
+      <div className="grid grid-cols-2 md:grid-cols-5 gap-8 pb-12 border-b border-border">
         {/* Brand Column (2 cols) */}
         <div className="col-span-2 space-y-4">
-          <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-xl bg-brand/10 border border-brand/20 flex items-center justify-center text-brand">
-              <Shield className="w-4 h-4" />
-            </div>
-            <span className="font-mono font-bold tracking-wider text-base text-foreground">
-              SPOORF
-            </span>
-          </div>
+          <BrandMark to="/" tag="Fleet" />
 
           <p className="text-xs text-muted leading-relaxed max-w-sm">
             Autonomous Layer 2 network defense and discovery platform. Zero collateral damage,
@@ -133,7 +127,7 @@ export const LandingFooter: React.FC = () => {
               </a>
             </li>
             <li>
-              <span className="text-muted/60">Threat Model & Invariants</span>
+              <span className="text-ink/40">Threat Model & Invariants</span>
             </li>
           </ul>
         </div>
@@ -160,10 +154,10 @@ export const LandingFooter: React.FC = () => {
               </a>
             </li>
             <li>
-              <span className="text-muted/60">API Specifications</span>
+              <span className="text-ink/40">API Specifications</span>
             </li>
             <li>
-              <span className="text-muted/60">Architecture Docs</span>
+              <span className="text-ink/40">Architecture Docs</span>
             </li>
           </ul>
         </div>

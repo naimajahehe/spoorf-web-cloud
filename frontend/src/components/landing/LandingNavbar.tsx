@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import { Shield, ArrowRight, Menu, X, Download, User } from 'lucide-react';
+import { ArrowRight, Menu, X, Download, User } from 'lucide-react';
+import { BrandMark } from '../ui/BrandMark';
 
 export const LandingNavbar: React.FC = () => {
   const { isAuthenticated, user } = useAuth();
@@ -17,21 +18,8 @@ export const LandingNavbar: React.FC = () => {
   return (
     <header className="sticky top-4 z-50 max-w-6xl mx-auto px-4 w-full select-none">
       <div className="bg-white/85 backdrop-blur-md border border-border shadow-card rounded-full px-5 py-2.5 flex items-center justify-between transition-all">
-        {/* Brand Monogram */}
-        <Link to="/" className="flex items-center gap-2.5 group">
-          <div className="w-8 h-8 rounded-full bg-foreground text-background flex items-center justify-center shadow-sm group-hover:scale-105 transition-transform">
-            <Shield className="w-4 h-4 text-brand" />
-          </div>
-          <div className="flex items-center gap-1.5">
-            <span className="font-sans font-bold tracking-tight text-foreground text-sm">
-              SPOORF
-            </span>
-            <span className="text-[10px] font-mono uppercase px-1.5 py-0.5 rounded bg-brand/10 text-brand font-semibold tracking-wider">
-              Fleet
-            </span>
-          </div>
-          <span className="w-2 h-2 rounded-full bg-emerald-600 status-pulse ml-0.5" title="Cloud Fleet Active" />
-        </Link>
+        {/* Brand Monogram (shared with the console navbar) */}
+        <BrandMark to="/" tag="Fleet" />
 
         {/* Desktop Navigation Links */}
         <nav className="hidden md:flex items-center gap-7">

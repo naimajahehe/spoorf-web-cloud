@@ -79,7 +79,7 @@ export const PricingTiers: React.FC = () => {
   ];
 
   return (
-    <section className="py-24 px-4 sm:px-6 max-w-7xl mx-auto border-t border-border/80">
+    <section className="py-24 px-4 sm:px-6 max-w-7xl mx-auto border-t border-border">
       {/* Header */}
       <div className="text-center max-w-3xl mx-auto mb-16">
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand/5 border border-brand/15 text-brand text-xs font-mono tracking-wider uppercase mb-4">
@@ -105,7 +105,7 @@ export const PricingTiers: React.FC = () => {
               className={`rounded-3xl p-8 sm:p-9 flex flex-col justify-between relative transition-all duration-300 ${
                 tier.popular
                   ? 'bg-white border-2 border-brand shadow-brand-glow -translate-y-2'
-                  : 'bg-white/70 backdrop-blur-sm border border-border/80 shadow-card hover:border-brand/40'
+                  : 'bg-white/70 backdrop-blur-sm border border-border shadow-card hover:border-brand/40'
               }`}
             >
               {/* Most Popular Ribbon */}
@@ -134,7 +134,7 @@ export const PricingTiers: React.FC = () => {
                 </p>
 
                 {/* Price Display */}
-                <div className="mb-6 pb-6 border-b border-border/60">
+                <div className="mb-6 pb-6 border-b border-border">
                   <div className="flex items-baseline gap-1.5">
                     <span className="text-4xl sm:text-5xl font-sans font-bold tracking-tight text-foreground">
                       {tier.price}

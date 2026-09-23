@@ -19,30 +19,32 @@ export const LandingPage: React.FC = () => {
       <LandingNavbar />
 
       {/* Main Landing Sections */}
+      {/* Each component renders its own <section>; these wrappers only carry the anchor targets.
+          scroll-mt keeps headings clear of the sticky floating navbar when jumping to an anchor. */}
       <main>
-        <section id="hero">
+        <div id="hero" className="scroll-mt-24">
           <HeroTopology />
-        </section>
+        </div>
 
-        <section id="mission">
+        <div id="mission" className="scroll-mt-24">
           <MissionLead />
-        </section>
+        </div>
 
-        <section id="showcase">
+        <div id="showcase" className="scroll-mt-24">
           <InteractiveFeatureTabs />
-        </section>
+        </div>
 
-        <section id="features">
+        <div id="features" className="scroll-mt-24">
           <BentoFeatures />
-        </section>
+        </div>
 
-        <section id="architecture">
+        <div id="architecture" className="scroll-mt-24">
           <FeatureMatrix />
-        </section>
+        </div>
 
-        <section id="pricing">
+        <div id="pricing" className="scroll-mt-24">
           <PricingTiers />
-        </section>
+        </div>
       </main>
 
       {/* Closing CTA & Footer */}

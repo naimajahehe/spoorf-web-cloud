@@ -23,7 +23,7 @@ export const HeroTopology: React.FC = () => {
       >
         <span className="w-1.5 h-1.5 rounded-full bg-brand" />
         <span>Sentinel v2.41</span>
-        <span className="text-muted-foreground/60">•</span>
+        <span className="text-ink/40">•</span>
         <span className="text-foreground">Instant 30s Heartbeat & Remote Session Kick</span>
         <ArrowRight className="w-3 h-3 text-brand group-hover:translate-x-0.5 transition-transform" />
       </a>
@@ -52,7 +52,7 @@ export const HeroTopology: React.FC = () => {
         </Link>
         <Link
           to="/download"
-          className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full bg-white hover:bg-surface-muted/60 border border-border text-foreground text-xs font-semibold tracking-wide shadow-sm hover:shadow-card transition-all"
+          className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full bg-white hover:bg-surface-muted border border-border text-foreground text-xs font-semibold tracking-wide shadow-sm hover:shadow-card transition-all"
         >
           <Download className="w-4 h-4 text-ink" />
           <span>Download Desktop Agent</span>
@@ -60,12 +60,12 @@ export const HeroTopology: React.FC = () => {
       </div>
 
       {/* Micro Copy Guarantees */}
-      <p className="mt-3.5 text-[11px] text-muted-foreground/70 font-mono">
+      <p className="mt-3.5 text-[11px] text-ink/50 font-mono">
         Zero-HWID architecture · No credit card required · Free tier includes 5 active cuts
       </p>
 
       {/* Dynamic Sentinel Fleet Topology Showcase Canvas */}
-      <div className="relative w-full max-w-5xl h-[480px] mt-14 bg-white/70 backdrop-blur-sm border border-border/80 rounded-3xl shadow-panel overflow-hidden p-6 select-none">
+      <div className="relative w-full max-w-5xl h-[480px] mt-14 bg-white/70 backdrop-blur-sm border border-border rounded-3xl shadow-panel overflow-hidden p-6 select-none">
         {/* Subtle Paper Grid Background inside Showcase */}
         <div className="absolute inset-0 bg-grid-paper opacity-70 pointer-events-none" />
 

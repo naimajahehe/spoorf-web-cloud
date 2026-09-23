@@ -30,7 +30,7 @@ export const MissionLead: React.FC = () => {
   ];
 
   return (
-    <section className="py-20 px-4 max-w-6xl mx-auto border-t border-border/80 text-center">
+    <section className="py-20 px-4 max-w-6xl mx-auto border-t border-border text-center">
       {/* Editorial Lead Quote with Instrument Serif Accent */}
       <h2 className="text-3xl sm:text-5xl font-sans font-bold tracking-[-0.025em] text-foreground max-w-3xl mx-auto leading-[1.15] text-balance">
         You cannot defend what you cannot{' '}

@@ -29,6 +29,15 @@ export default {
           muted: '#eae9e5',
         },
         border: 'rgba(45, 42, 58, 0.14)',
+        // Session / device states (landing spec: --status-running, --status-queued) plus revoked
+        status: {
+          online: '#15803d',
+          'online-bg': 'rgba(22, 163, 74, 0.08)',
+          idle: '#b45309',
+          'idle-bg': 'rgba(217, 119, 6, 0.09)',
+          danger: '#be123c',
+          'danger-bg': 'rgba(225, 29, 72, 0.07)',
+        },
       },
       fontFamily: {
         sans: ['Geist', 'ui-sans-serif', 'system-ui', 'sans-serif'],

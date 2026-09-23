@@ -97,7 +97,7 @@ export const InteractiveFeatureTabs: React.FC = () => {
   };
 
   return (
-    <section id="showcase" className="py-24 px-4 max-w-6xl mx-auto">
+    <section className="py-24 px-4 max-w-6xl mx-auto">
       {/* Section Header */}
       <div className="text-center max-w-3xl mx-auto mb-16">
         <span className="text-[11px] font-mono uppercase tracking-widest text-brand font-bold px-3 py-1 rounded-full bg-brand/10 border border-brand/20">
@@ -190,8 +190,8 @@ export const InteractiveFeatureTabs: React.FC = () => {
           <div className="relative z-10 my-6 flex-1 flex flex-col justify-center">
             {/* Tab 0: L2 Discovery Interactive Table */}
             {activeTab === 0 && (
-              <div className="border border-border/80 rounded-xl bg-surface-muted/40 p-4 space-y-2.5 font-sans">
-                <div className="flex items-center justify-between text-[11px] font-mono text-muted-foreground pb-2 border-b border-border/60">
+              <div className="border border-border rounded-xl bg-surface-muted p-4 space-y-2.5 font-sans">
+                <div className="flex items-center justify-between text-[11px] font-mono text-muted-foreground pb-2 border-b border-border">
                   <span>DISCOVERED HOSTS (3 ACTIVE)</span>
                   <span className="text-emerald-600 flex items-center gap-1">
                     <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 status-pulse" />
@@ -228,7 +228,7 @@ export const InteractiveFeatureTabs: React.FC = () => {
                   return (
                     <div
                       key={device.ip}
-                      className="bg-white border border-border/70 rounded-lg p-2.5 flex items-center justify-between text-xs shadow-sm hover:border-brand/30 transition-colors"
+                      className="bg-white border border-border rounded-lg p-2.5 flex items-center justify-between text-xs shadow-sm hover:border-brand/30 transition-colors"
                     >
                       <div className="flex items-center gap-2.5">
                         <div className="w-6 h-6 rounded-md bg-surface-muted flex items-center justify-center text-ink">
@@ -254,7 +254,7 @@ export const InteractiveFeatureTabs: React.FC = () => {
 
             {/* Tab 1: Precision PWM Interactive Speed Slider */}
             {activeTab === 1 && (
-              <div className="border border-border/80 rounded-xl bg-surface-muted/40 p-5 space-y-4">
+              <div className="border border-border rounded-xl bg-surface-muted p-5 space-y-4">
                 <div className="flex items-center justify-between text-xs font-semibold text-foreground">
                   <span>Target: 192.168.1.84 (Unknown Rogue Host)</span>
                   <span className="font-mono text-brand font-bold text-sm">
@@ -303,7 +303,7 @@ export const InteractiveFeatureTabs: React.FC = () => {
 
             {/* Tab 2: Zero-Collateral Invariant Shield */}
             {activeTab === 2 && (
-              <div className="border border-border/80 rounded-xl bg-surface-muted/40 p-5 space-y-3">
+              <div className="border border-border rounded-xl bg-surface-muted p-5 space-y-3">
                 <div className="bg-white border border-border rounded-xl p-3.5 flex items-center justify-between shadow-sm">
                   <div className="flex items-center gap-3">
                     <div className="w-8 h-8 rounded-lg bg-cyan-50 border border-cyan-200 text-cyan-700 flex items-center justify-center">
@@ -346,7 +346,7 @@ export const InteractiveFeatureTabs: React.FC = () => {
 
             {/* Tab 3: Cloud Fleet Remote Kick Simulation */}
             {activeTab === 3 && (
-              <div className="border border-border/80 rounded-xl bg-surface-muted/40 p-4 space-y-3 font-sans">
+              <div className="border border-border rounded-xl bg-surface-muted p-4 space-y-3 font-sans">
                 <div className="bg-white border border-border rounded-xl p-3.5 flex items-center justify-between shadow-sm">
                   <div className="flex items-center gap-2.5">
                     <Laptop className="w-4 h-4 text-brand" />

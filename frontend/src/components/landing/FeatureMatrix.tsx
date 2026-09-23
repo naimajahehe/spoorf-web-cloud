@@ -136,7 +136,7 @@ export const FeatureMatrix: React.FC = () => {
   ];
 
   return (
-    <section className="py-24 px-4 sm:px-6 max-w-7xl mx-auto border-t border-border/80">
+    <section className="py-24 px-4 sm:px-6 max-w-7xl mx-auto border-t border-border">
       {/* Section Header */}
       <div className="text-center max-w-3xl mx-auto mb-16">
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand/5 border border-brand/15 text-brand text-xs font-mono tracking-wider uppercase mb-4">
@@ -160,7 +160,7 @@ export const FeatureMatrix: React.FC = () => {
           return (
             <div
               key={idx}
-              className="bg-white/70 backdrop-blur-sm border border-border/80 rounded-3xl p-7 sm:p-8 shadow-card flex flex-col justify-between hover:border-brand/30 transition-all duration-300"
+              className="bg-white/70 backdrop-blur-sm border border-border rounded-3xl p-7 sm:p-8 shadow-card flex flex-col justify-between hover:border-brand/30 transition-all duration-300"
             >
               <div>
                 {/* Column Header */}
@@ -181,7 +181,7 @@ export const FeatureMatrix: React.FC = () => {
                 </p>
 
                 {/* Items List */}
-                <div className="space-y-4 pt-4 border-t border-border/60">
+                <div className="space-y-4 pt-4 border-t border-border">
                   {col.items.map((item, itemIdx) => (
                     <div key={itemIdx} className="flex items-start gap-3">
                       <div className="w-5 h-5 rounded-full bg-brand/10 border border-brand/20 flex items-center justify-center text-brand shrink-0 mt-0.5">
