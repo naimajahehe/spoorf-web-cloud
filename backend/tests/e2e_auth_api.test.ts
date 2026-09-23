@@ -46,7 +46,7 @@ describe('End-to-End HTTP API Suite', () => {
     const body: any = await res.json();
     assert.equal(body.status, 'healthy');
     assert.equal(body.database, 'connected');
-    assert.equal(body.version, '0.0.3');
+    assert.equal(body.version, '0.0.4');
   });
 
   test('2. POST /v1/auth/register validates schema and creates account (201 Created)', async () => {

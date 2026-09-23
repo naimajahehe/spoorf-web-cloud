@@ -2,6 +2,40 @@
 
 All notable changes to the Spoorf Cloud ecosystem will be documented in this file.
 
+## [v0.0.4] - 2026-09-23
+
+### Security Hardening: Session Binding, Atomic Vouchers & Desktop License Contract
+- **Background (audit 2026-09-23)**:
+  - Tokens without a `sessionId` were never revocable, so logging in without `session_id` bypassed the concurrent device limit entirely.
+  - Heartbeat and logout trusted `session_id` from the request body: any user could revoke another user's device or take over its session row.
+  - Re-login with an old token resurrected kicked sessions, voucher redemption could be raced (10/10 concurrent redemptions of one voucher succeeded), and expired paid licenses kept issuing Pro/VIP tokens.
+  - The E2E test suite silently ran against the development database.
+- **Session Binding (`authGuard.ts`, `authService.ts`)**:
+  - `session_id` is required on login; every token must reference a live session owned by the same user, otherwise `401 SESSION_REVOKED`.
+  - Heartbeat and logout use the session from the verified token only (body mismatch → `403`); heartbeat no longer reassigns session ownership.
+  - Token re-login is only accepted for the same user and same, still active session.
+  - Device handover keeps working, and the previous owner's token is invalidated immediately.
+  - Kick enforcement runs under a per-user row lock (`SELECT ... FOR UPDATE`) to stop parallel logins from exceeding the slot limit.
+  - Web portal sessions (`platform: "web"`) are revocable but do not consume desktop device slots; `revoke-all` keeps the caller's own session.
+- **Licensing (`authService.ts`)**:
+  - Vouchers are claimed atomically (`updateMany where isUsed=false`), rate limited to 10 attempts / 15 min per account, extend same-tier licenses, and reject lower-tier vouchers.
+  - Expired paid licenses are served as Free on login, heartbeat and `/auth/me`.
+  - Heartbeat and `/auth/me` return the live `license`; `/auth/redeem` returns a rotated signed `token` carrying the new tier for desktop offline verification.
+  - Unknown-email logins still run a bcrypt comparison to avoid account enumeration by timing.
+- **Platform**:
+  - Malformed JSON → `400 INVALID_JSON`, oversized payload → `413 PAYLOAD_TOO_LARGE`, disallowed CORS origin → `403`.
+  - New `TRUST_PROXY` setting; session IP comes from `req.ip` instead of the raw `X-Forwarded-For` header.
+  - Fixed `MIDTRANS_IS_PRODUCTION=false` being parsed as `true`.
+- **Web Portal**:
+  - Sends a persistent per-browser `session_id` with `platform: "web"`; the dashboard excludes web sessions from slot usage and marks the current browser.
+  - Reads `VITE_API_URL` (matching `.env.example`); production builds fall back to same-origin `/v1` instead of `localhost`.
+  - 401 responses only redirect to `/login` from protected routes; transient network errors no longer log the user out.
+- **Testing**:
+  - `tests/setup.ts` loads before every test file; Prisma refuses to run under `NODE_ENV=test` unless the database name ends with `_test`.
+  - New `e2e_security_regression.test.ts` (13 cases); test vouchers are cleaned up after each suite.
+  - Backend: 53/53 tests green. Cross-repo contract verified against the desktop `LicenseManager` (login → redeem → restart → expiry → remote revoke).
+- **Breaking**: web users signed in before this release must log in once more (their tokens carry no `sessionId`). Installed desktop builds remain compatible.
+
 ## [v0.0.3] - 2026-09-16
 
 ### Enterprise Core Auth API & Desktop Bridge Layer
