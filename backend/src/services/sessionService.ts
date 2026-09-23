@@ -88,13 +88,15 @@ export class SessionService {
   }
 
   /**
-   * Revokes all currently active sessions for a user.
+   * Revokes all currently active sessions for a user, except the caller's own
+   * session so the dashboard that issued the request stays signed in.
    */
-  public async revokeAllSessions(userId: string): Promise<RevokeAllSessionsResponse> {
+  public async revokeAllSessions(userId: string, exceptSessionId?: string): Promise<RevokeAllSessionsResponse> {
     const result = await this.db.session.updateMany({
       where: {
         userId,
         isRevoked: false,
+        ...(exceptSessionId ? { sessionId: { not: exceptSessionId } } : {}),
       },
       data: {
         isRevoked: true,

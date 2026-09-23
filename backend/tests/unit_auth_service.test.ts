@@ -21,9 +21,12 @@ describe('AuthService Unit & Business Logic Suite', () => {
 
   after(async () => {
     if (prismaTest) {
-      // Clean up test user
+      // Clean up test user and the vouchers created by this suite
       await prismaTest.user.deleteMany({
         where: { email: testEmail }
+      });
+      await prismaTest.licenseKey.deleteMany({
+        where: { key: { startsWith: 'PRO-UNIT-' } }
       });
       await prismaTest.$disconnect();
     }
@@ -92,7 +95,8 @@ describe('AuthService Unit & Business Logic Suite', () => {
       async () => {
         await authService.login({
           email: testEmail,
-          password: 'WrongPassword999!'
+          password: 'WrongPassword999!',
+          session_id: crypto.randomUUID()
         });
       },
       /Email atau kata sandi tidak valid/i
@@ -183,6 +187,8 @@ describe('AuthService Unit & Business Logic Suite', () => {
     assert.equal(updatedLicense.can_deep_fingerprint, true);
   });
 
+  // Handover stays supported for shared machines; the previous owner's token is invalidated
+  // by authGuard's ownership check (see e2e_security_regression test 8).
   test('8. Multi-user device handover: login with existing device sessionId reassigns session to new user', async () => {
     const emailUser1 = `handover_user1_${Date.now()}@spoorf.app`;
     const emailUser2 = `handover_user2_${Date.now()}@spoorf.app`;

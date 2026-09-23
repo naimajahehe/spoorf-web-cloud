@@ -3,6 +3,7 @@ import { useAuth } from '../context/AuthContext';
 import { sessionService } from '../services/sessionService';
 import { DeviceSession } from '../types/session';
 import { ConfirmModal } from '../components/common/ConfirmModal';
+import { WEB_PLATFORM, getWebSessionId } from '../services/webSession';
 import {
   Laptop,
   Monitor,
@@ -17,7 +18,8 @@ import {
 } from 'lucide-react';
 
 export const DashboardPage: React.FC = () => {
-  const { user, license } = useAuth();
+  const { license } = useAuth();
+  const currentSessionId = getWebSessionId();
   const [sessions, setSessions] = useState<DeviceSession[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [feedback, setFeedback] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
@@ -107,14 +109,22 @@ export const DashboardPage: React.FC = () => {
   };
 
   const getMaxSlots = (): number => {
-    const tier = (license?.tier || user?.role || 'free').toLowerCase();
+    const tier = (license?.tier || 'free').toLowerCase();
     if (tier === 'vip') return 5;
     if (tier === 'pro') return 2;
     return 1;
   };
 
   const maxSlots = getMaxSlots();
-  const activeSessionsCount = useMemo(() => sessions.filter((s) => !s.isRevoked).length, [sessions]);
+  // Web portal sessions are revocable but do not use desktop device slots (mirrors the API).
+  const activeSessionsCount = useMemo(
+    () => sessions.filter((s) => !s.isRevoked && s.platform !== WEB_PLATFORM).length,
+    [sessions]
+  );
+  const revocableSessionsCount = useMemo(
+    () => sessions.filter((s) => !s.isRevoked && s.sessionId !== currentSessionId).length,
+    [sessions, currentSessionId]
+  );
   const slotPercentage = Math.min(100, Math.round((activeSessionsCount / maxSlots) * 100));
 
   const formatTimestamp = (dateStr: string | null | undefined): string => {
@@ -250,7 +260,7 @@ export const DashboardPage: React.FC = () => {
               <RefreshCw className={`w-4 h-4 text-cyan-400 ${isLoading ? 'animate-spin' : ''}`} />
             </button>
 
-            {activeSessionsCount > 0 && (
+            {revocableSessionsCount > 0 && (
               <button
                 type="button"
                 onClick={() => setIsRevokeAllOpen(true)}
@@ -278,6 +288,8 @@ export const DashboardPage: React.FC = () => {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4">
             {sessions.map((sess) => {
+              const isWeb = sess.platform === WEB_PLATFORM;
+              const isCurrent = sess.sessionId === currentSessionId;
               const isWindows = sess.platform === 'win32' || (sess.platform || '').toLowerCase().includes('win');
 
               return (
@@ -292,7 +304,9 @@ export const DashboardPage: React.FC = () => {
                   <div className="flex items-start justify-between gap-3 mb-3">
                     <div className="flex items-center gap-3">
                       <div className="p-2.5 rounded-xl bg-slate-900 border border-slate-800 text-slate-300">
-                        {isWindows ? (
+                        {isWeb ? (
+                          <Globe className="w-5 h-5 text-cyan-400" />
+                        ) : isWindows ? (
                           <Monitor className="w-5 h-5 text-cyan-400" />
                         ) : (
                           <Laptop className="w-5 h-5 text-cyan-400" />
@@ -300,12 +314,18 @@ export const DashboardPage: React.FC = () => {
                       </div>
                       <div>
                         <h4 className="text-sm font-bold text-white font-mono">
-                          {sess.deviceName || 'Perangkat Desktop Sentinel'}
+                          {sess.deviceName || (isWeb ? 'Web Portal' : 'Perangkat Desktop Sentinel')}
                         </h4>
                         <div className="flex items-center gap-2 mt-0.5 text-xs text-slate-400 font-mono">
-                          <span>{sess.platform || 'Windows'}</span>
-                          <span>·</span>
-                          <span>v{sess.appVersion || '2.41.79'}</span>
+                          {isWeb ? (
+                            <span>Browser · tidak memakai slot perangkat</span>
+                          ) : (
+                            <>
+                              <span>{sess.platform || 'Windows'}</span>
+                              <span>·</span>
+                              <span>v{sess.appVersion || '2.41.79'}</span>
+                            </>
+                          )}
                         </div>
                       </div>
                     </div>
@@ -356,7 +376,11 @@ export const DashboardPage: React.FC = () => {
                   </div>
 
                   {/* Kick Action Button */}
-                  {!sess.isRevoked ? (
+                  {isCurrent && !sess.isRevoked ? (
+                    <div className="w-full py-2 bg-cyan-950/20 border border-cyan-800/40 text-cyan-300 rounded-lg text-xs font-mono text-center select-none">
+                      Sesi Ini (Browser Anda)
+                    </div>
+                  ) : !sess.isRevoked ? (
                     <button
                       type="button"
                       onClick={() => setTargetToRevoke(sess)}
@@ -392,7 +416,7 @@ export const DashboardPage: React.FC = () => {
       <ConfirmModal
         isOpen={isRevokeAllOpen}
         title="Putuskan Semua Sesi Aktif"
-        message={`Tindakan ini akan mencabut seluruh sesi perangkat desktop yang sedang aktif (${activeSessionsCount} perangkat). Semua perangkat desktop akan otomatis diturunkan ke versi Free. Lanjutkan?`}
+        message={`Tindakan ini akan mencabut ${revocableSessionsCount} sesi aktif lain (desktop dan browser). Aplikasi desktop terkait akan otomatis diturunkan ke versi Free. Sesi browser ini tetap aktif. Lanjutkan?`}
         confirmLabel="Ya, Putuskan Semua"
         cancelLabel="Batal"
         isDanger={true}

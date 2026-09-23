@@ -1,23 +1,31 @@
 import { Request, Response, NextFunction } from 'express';
 import { z } from 'zod';
 import { AuthService } from '../services/authService';
+import { ForbiddenError } from '../errors/AppError';
+
+const sessionIdField = z.string().trim().min(8, 'session_id tidak valid').max(128);
+
+const deviceMetaFields = {
+  session_id: sessionIdField.optional(),
+  sessionId: sessionIdField.optional(),
+  platform: z.string().max(32).optional(),
+  app_version: z.string().max(32).optional(),
+  deviceName: z.string().max(100).optional(),
+};
 
 export const registerSchema = z.object({
   email: z.string().email('Format email tidak valid').max(255),
-  password: z.string().min(8, 'Kata sandi minimal 8 karakter').max(100),
+  password: z.string().min(8, 'Kata sandi minimal 8 karakter').max(72, 'Kata sandi maksimal 72 karakter'),
   name: z.string().min(2, 'Nama minimal 2 karakter').max(100).optional(),
+  ...deviceMetaFields,
 });
 
 export const loginSchema = z.object({
   email: z.string().email('Format email tidak valid'),
-  password: z.string().optional(),
-  token: z.string().optional(),
-  session_id: z.string().optional(),
-  sessionId: z.string().optional(),
-  hwid: z.string().optional(),
-  platform: z.string().optional(),
-  app_version: z.string().optional(),
-  deviceName: z.string().optional(),
+  password: z.string().max(200).optional(),
+  token: z.string().max(4096).optional(),
+  hwid: sessionIdField.optional(),
+  ...deviceMetaFields,
 });
 
 export const heartbeatSchema = z.object({
@@ -38,7 +46,7 @@ export class AuthController {
 
   public register = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-      const result = await this.authService.register(req.body);
+      const result = await this.authService.register({ ...req.body, ipAddress: req.ip });
       res.status(201).json(result);
     } catch (error) {
       next(error);
@@ -47,11 +55,8 @@ export class AuthController {
 
   public login = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-      const ipAddress = (req.headers['x-forwarded-for'] as string) || req.socket.remoteAddress || undefined;
-      const result = await this.authService.login({
-        ...req.body,
-        ipAddress,
-      });
+      // req.ip honours the `trust proxy` setting; raw X-Forwarded-For is client-controlled.
+      const result = await this.authService.login({ ...req.body, ipAddress: req.ip });
       res.status(200).json(result);
     } catch (error) {
       next(error);
@@ -61,8 +66,16 @@ export class AuthController {
   public heartbeat = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const userId = req.user!.userId;
-      const sessionId = req.body.session_id || req.body.sessionId || req.sessionContext?.sessionId;
-      const result = await this.authService.sessionHeartbeat(userId, sessionId);
+      const tokenSessionId = req.sessionContext?.sessionId;
+      const bodySessionId = req.body.session_id || req.body.sessionId;
+
+      // The session is taken from the verified token; the body value is only a consistency check
+      // kept for desktop clients that still send it.
+      if (bodySessionId && bodySessionId !== tokenSessionId) {
+        throw new ForbiddenError('session_id tidak cocok dengan sesi pada token.');
+      }
+
+      const result = await this.authService.sessionHeartbeat(userId, tokenSessionId);
       res.status(200).json(result);
     } catch (error) {
       next(error);
@@ -73,9 +86,12 @@ export class AuthController {
     try {
       const userId = req.user!.userId;
       const updatedLicense = await this.authService.redeemLicenseKey(userId, req.body.key);
+      // authGuard guarantees a bound session; the rotated token carries the new tier as signed claims.
+      const token = await this.authService.issueSessionToken(userId, req.sessionContext!.sessionId!);
       res.status(200).json({
         status: 'success',
         message: 'Kode voucher lisensi berhasil diaktivasi.',
+        token,
         license: updatedLicense,
       });
     } catch (error) {
@@ -85,8 +101,7 @@ export class AuthController {
 
   public logout = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-      const sessionId = req.body?.session_id || req.body?.sessionId || req.sessionContext?.sessionId;
-      await this.authService.logout(sessionId);
+      await this.authService.logout(req.user!.userId, req.sessionContext?.sessionId);
       res.status(200).json({
         status: 'success',
         message: 'Berhasil logout.',
@@ -98,9 +113,10 @@ export class AuthController {
 
   public getProfile = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
+      const profile = await this.authService.getProfile(req.user!.userId);
       res.status(200).json({
         status: 'success',
-        user: req.user,
+        ...profile,
       });
     } catch (error) {
       next(error);

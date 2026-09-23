@@ -6,12 +6,16 @@ import authRoutes from './routes/authRoutes';
 import sessionRoutes from './routes/sessionRoutes';
 import downloadRoutes from './routes/downloadRoutes';
 import { errorHandler } from './middlewares/errorHandler';
-import { NotFoundError } from './errors/AppError';
+import { ForbiddenError, NotFoundError } from './errors/AppError';
 import { pingDatabase } from './config/database';
 import { env } from './config/env';
 
 export function createApp(): express.Application {
   const app = express();
+
+  // Behind a reverse proxy, req.ip (used for rate limiting and session IP) must come
+  // from the trusted proxy hop, not from a client-supplied X-Forwarded-For header.
+  app.set('trust proxy', env.TRUST_PROXY);
 
   // 1. Security Headers
   app.use(helmet());
@@ -34,7 +38,7 @@ export function createApp(): express.Application {
         if (!origin || allowedOrigins.includes(origin)) {
           callback(null, true);
         } else {
-          callback(new Error(`Origin ${origin} not allowed by CORS`));
+          callback(new ForbiddenError(`Origin ${origin} tidak diizinkan oleh kebijakan CORS`));
         }
       },
       credentials: true,
@@ -63,7 +67,7 @@ export function createApp(): express.Application {
     res.status(isDbConnected ? 200 : 503).json({
       status,
       service: 'spoorf-web-cloud',
-      version: '0.0.3',
+      version: '0.0.4',
       uptimeSeconds: Math.floor(process.uptime()),
       timestamp: new Date().toISOString(),
       database: isDbConnected ? 'connected' : 'disconnected',

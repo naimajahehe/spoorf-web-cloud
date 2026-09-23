@@ -34,6 +34,9 @@ describe('End-to-End HTTP API Suite', () => {
       await prismaTest.user.deleteMany({
         where: { email: testEmail }
       });
+      await prismaTest.licenseKey.deleteMany({
+        where: { key: { startsWith: 'PRO-E2E-' } }
+      });
     }
   });
 
@@ -43,7 +46,7 @@ describe('End-to-End HTTP API Suite', () => {
     const body: any = await res.json();
     assert.equal(body.status, 'healthy');
     assert.equal(body.database, 'connected');
-    assert.equal(body.version, '0.0.3');
+    assert.equal(body.version, '0.0.4');
   });
 
   test('2. POST /v1/auth/register validates schema and creates account (201 Created)', async () => {
@@ -167,6 +170,12 @@ describe('End-to-End HTTP API Suite', () => {
     assert.equal(body.status, 'success');
     assert.equal(body.license.tier, 'pro');
     assert.equal(body.license.can_throttle, true);
+
+    // Rotated token carries the redeemed tier as signed claims (desktop offline verification)
+    assert.ok(body.token);
+    const claims = JSON.parse(Buffer.from(body.token.split('.')[1], 'base64url').toString('utf8'));
+    assert.equal(claims.tier, 'pro');
+    authToken = body.token;
   });
 
   test('9. POST /v1/auth/logout succeeds and responds with success (200 OK)', async () => {

@@ -35,7 +35,7 @@ export class SessionController {
   public revokeAllSessions = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const userId = req.user!.userId;
-      const result = await this.sessionService.revokeAllSessions(userId);
+      const result = await this.sessionService.revokeAllSessions(userId, req.sessionContext?.sessionId);
       res.status(200).json(result);
     } catch (err) {
       next(err);

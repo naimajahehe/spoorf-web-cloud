@@ -73,6 +73,14 @@ export const authRateLimiter = createRateLimiter({
   message: 'Terlalu banyak percobaan autentikasi dari IP ini. Silakan coba lagi setelah 15 menit.',
 });
 
+// Keyed by account (runs after requireAuth) to stop voucher-code guessing.
+export const redeemRateLimiter = createRateLimiter({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 10, // 10 redeem attempts per 15 min per account
+  message: 'Terlalu banyak percobaan aktivasi voucher. Silakan coba lagi setelah 15 menit.',
+  keyGenerator: (req) => req.user?.userId || req.ip || 'unknown',
+});
+
 export const apiRateLimiter = createRateLimiter({
   windowMs: 60 * 1000, // 1 minute
   max: 120, // 120 requests per minute

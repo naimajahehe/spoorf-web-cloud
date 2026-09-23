@@ -8,7 +8,7 @@ import {
 } from '../controllers/authController';
 import { validateBody } from '../middlewares/validation';
 import { requireAuth } from '../middlewares/authGuard';
-import { authRateLimiter } from '../middlewares/rateLimiter';
+import { authRateLimiter, redeemRateLimiter } from '../middlewares/rateLimiter';
 
 const router = Router();
 const controller = new AuthController();
@@ -20,7 +20,7 @@ router.post('/login', authRateLimiter, validateBody(loginSchema), controller.log
 // Protected routes (require RS256 token)
 router.get('/me', requireAuth, controller.getProfile);
 router.post('/heartbeat', requireAuth, validateBody(heartbeatSchema), controller.heartbeat);
-router.post('/redeem', requireAuth, validateBody(redeemSchema), controller.redeem);
+router.post('/redeem', requireAuth, redeemRateLimiter, validateBody(redeemSchema), controller.redeem);
 router.post('/logout', requireAuth, controller.logout);
 
 export default router;
