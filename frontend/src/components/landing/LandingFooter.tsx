@@ -11,17 +11,17 @@ export const LandingFooter: React.FC = () => {
         <div className="relative z-10 max-w-2xl mx-auto">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/90 text-brand text-xs font-mono tracking-wider uppercase mb-5">
             <Shield className="w-3.5 h-3.5" />
-            <span>Autonomous L2 Defense</span>
+            <span>Ready in minutes</span>
           </div>
 
           <h2 className="text-3xl sm:text-5xl font-sans font-bold tracking-tight text-white leading-[1.15] mb-5">
-            Take full command of your Layer 2{' '}
-            <span className="font-serif italic font-normal text-white/85">perimeter</span>.
+            Take control of your{' '}
+            <span className="font-serif italic font-normal text-white/85">network</span>.
           </h2>
 
           <p className="text-white/80 text-sm sm:text-base leading-relaxed mb-8">
-            Deploy the Spoorf Sentinel agent on your local machine or launch the Cloud Console
-            to synchronize, monitor, and enforce access across your distributed fleet.
+            Install the desktop app to scan and manage your network, or sign in to the web portal
+            to control your devices from anywhere. The Free plan is enough to get started.
           </p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4">
@@ -29,7 +29,7 @@ export const LandingFooter: React.FC = () => {
               to="/register"
               className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-full px-6 py-3 text-sm font-semibold bg-white text-brand hover:bg-white/90 shadow-sm transition-all active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60 focus-visible:ring-offset-2 focus-visible:ring-offset-brand-hover"
             >
-              <span>Launch Cloud Console</span>
+              <span>Get started free</span>
               <ArrowRight className="w-4 h-4" />
             </Link>
             <Link
@@ -37,12 +37,12 @@ export const LandingFooter: React.FC = () => {
               className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-full px-6 py-3 text-sm font-semibold border border-white/40 text-white hover:bg-white/10 transition-all active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60 focus-visible:ring-offset-2 focus-visible:ring-offset-brand-hover"
             >
               <Download className="w-4 h-4" />
-              <span>Download Desktop Agent</span>
+              <span>Download the app</span>
             </Link>
           </div>
 
           <div className="mt-5 text-[11px] font-mono text-white/70">
-            Zero-HWID architecture · 100% Free tier available · Instant setup
+            No hardware tracking · Free plan available · Ready in minutes
           </div>
         </div>
       </div>
@@ -54,14 +54,14 @@ export const LandingFooter: React.FC = () => {
           <BrandMark to="/" tag="Fleet" />
 
           <p className="text-xs text-muted leading-relaxed max-w-sm">
-            Autonomous Layer 2 network defense and discovery platform. Zero collateral damage,
-            mathematical gateway immunity, and sub-second discovery.
+            See and manage every device on your local network, without ever putting your router
+            or your own connection at risk.
           </p>
 
           <div className="pt-2">
             <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-500/5 border border-emerald-500/20 text-emerald-700 text-xs font-mono">
               <span className="w-2 h-2 rounded-full bg-emerald-500 status-pulse" />
-              <span>All Systems Operational · Cloud Heartbeat Live</span>
+              <span>All systems operational</span>
             </div>
           </div>
         </div>
@@ -74,27 +74,27 @@ export const LandingFooter: React.FC = () => {
           <ul className="space-y-2 text-muted">
             <li>
               <a href="#showcase" className="hover:text-brand transition-colors">
-                Sub-Second Scanner
+                Network scanner
               </a>
             </li>
             <li>
               <a href="#showcase" className="hover:text-brand transition-colors">
-                PWM Bandwidth Limiter
+                Bandwidth limiter
               </a>
             </li>
             <li>
               <a href="#features" className="hover:text-brand transition-colors">
-                Captive Portal Redirection
+                Captive portal (Pro)
               </a>
             </li>
             <li>
               <a href="#architecture" className="hover:text-brand transition-colors">
-                Invariant Engine
+                Safety guards
               </a>
             </li>
             <li>
               <Link to="/download" className="hover:text-brand transition-colors">
-                Desktop Agent
+                Desktop app
               </Link>
             </li>
           </ul>
@@ -108,26 +108,26 @@ export const LandingFooter: React.FC = () => {
           <ul className="space-y-2 text-muted">
             <li>
               <a href="#features" className="hover:text-brand transition-colors">
-                Zero-HWID Guarantee
+                No hardware tracking
               </a>
             </li>
             <li>
               <a href="#architecture" className="hover:text-brand transition-colors">
-                Invariant 1 (Gateway Immune)
+                Router protection
               </a>
             </li>
             <li>
               <a href="#architecture" className="hover:text-brand transition-colors">
-                Invariant 2 (Anti Self-Cut)
+                Self-cut protection
               </a>
             </li>
             <li>
               <a href="#features" className="hover:text-brand transition-colors">
-                Asymmetric RS256 Auth
+                Signed licences (RS256)
               </a>
             </li>
             <li>
-              <span className="text-ink/40">Threat Model & Invariants</span>
+              <span className="text-ink/40">Security overview</span>
             </li>
           </ul>
         </div>
@@ -140,17 +140,17 @@ export const LandingFooter: React.FC = () => {
           <ul className="space-y-2 text-muted">
             <li>
               <Link to="/login" className="hover:text-brand transition-colors">
-                Cloud Console Login
+                Sign in
               </Link>
             </li>
             <li>
               <Link to="/register" className="hover:text-brand transition-colors">
-                Create Free Account
+                Create account
               </Link>
             </li>
             <li>
               <a href="#pricing" className="hover:text-brand transition-colors">
-                Pricing Tiers
+                Pricing
               </a>
             </li>
             <li>
@@ -166,12 +166,12 @@ export const LandingFooter: React.FC = () => {
       {/* Copyright & Disclaimer Bar */}
       <div className="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-muted">
         <div>
-          © 2026 Spoorf NetCut Sentinel. Built for autonomous Layer 2 defense.
+          © 2026 Spoorf NetCut Sentinel.
         </div>
         <div className="font-mono text-[11px] text-muted flex items-center gap-4">
-          <span>RFC 1918 Subnets Only</span>
+          <span>Private networks only</span>
           <span>·</span>
-          <span>Zero Telemetry Leaks</span>
+          <span>No tracking</span>
         </div>
       </div>
     </footer>

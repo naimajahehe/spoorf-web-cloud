@@ -9,9 +9,9 @@ export const LandingNavbar: React.FC = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const navLinks = [
-    { label: 'Product', href: '#showcase' },
-    { label: 'Features', href: '#features' },
-    { label: 'Architecture', href: '#architecture' },
+    { label: 'How it works', href: '#showcase' },
+    { label: 'What you get', href: '#architecture' },
+    { label: 'Under the hood', href: '#features' },
     { label: 'Pricing', href: '#pricing' },
   ];
 
@@ -53,7 +53,7 @@ export const LandingNavbar: React.FC = () => {
                 to="/dashboard"
                 className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-brand hover:bg-brand-hover text-white text-xs font-medium transition-all shadow-brand-glow hover:shadow-panel"
               >
-                <span>Buka Dashboard</span>
+                <span>Open dashboard</span>
                 <ArrowRight className="w-3.5 h-3.5" />
               </Link>
             </div>
@@ -63,13 +63,13 @@ export const LandingNavbar: React.FC = () => {
                 to="/login"
                 className="text-xs font-medium text-ink hover:text-foreground px-3 py-1.5 transition-colors"
               >
-                Sign In
+                Sign in
               </Link>
               <Link
                 to="/register"
                 className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-brand hover:bg-brand-hover text-white text-xs font-medium transition-all shadow-brand-glow hover:shadow-panel active:scale-[0.98]"
               >
-                <span>Launch Console</span>
+                <span>Get started</span>
                 <ArrowRight className="w-3.5 h-3.5" />
               </Link>
             </div>
@@ -106,7 +106,7 @@ export const LandingNavbar: React.FC = () => {
             className="text-sm font-medium text-ink py-1 hover:text-foreground transition-colors flex items-center gap-2"
           >
             <Download className="w-4 h-4 text-brand" />
-            <span>Download Desktop Agent</span>
+            <span>Download the app</span>
           </Link>
           <div className="pt-2 border-t border-border flex flex-col gap-2">
             {isAuthenticated ? (
@@ -115,7 +115,7 @@ export const LandingNavbar: React.FC = () => {
                 onClick={() => setMobileMenuOpen(false)}
                 className="w-full text-center py-2 rounded-xl bg-brand text-white text-xs font-medium"
               >
-                Buka Dashboard
+                Open dashboard
               </Link>
             ) : (
               <>
@@ -124,14 +124,14 @@ export const LandingNavbar: React.FC = () => {
                   onClick={() => setMobileMenuOpen(false)}
                   className="w-full text-center py-2 rounded-xl border border-border text-ink text-xs font-medium"
                 >
-                  Sign In
+                  Sign in
                 </Link>
                 <Link
                   to="/register"
                   onClick={() => setMobileMenuOpen(false)}
                   className="w-full text-center py-2 rounded-xl bg-brand text-white text-xs font-medium shadow-brand-glow"
                 >
-                  Launch Console
+                  Get started
                 </Link>
               </>
             )}

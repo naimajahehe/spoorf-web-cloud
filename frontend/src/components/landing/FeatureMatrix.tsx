@@ -1,5 +1,5 @@
 import React from 'react';
-import { Check, Shield, Cloud, Terminal, Cpu } from 'lucide-react';
+import { Check, Shield, Cloud, Cpu } from 'lucide-react';
 
 interface FeatureItem {
   name: string;
@@ -18,118 +18,94 @@ interface FeatureColumn {
 export const FeatureMatrix: React.FC = () => {
   const columns: FeatureColumn[] = [
     {
-      title: 'Layer 2 Engine',
-      subtitle: 'Microsecond packet injection & invariant defense',
+      title: 'On your network',
+      subtitle: 'What the desktop app does on your local network',
       icon: Cpu,
-      badge: 'L2 Core',
+      badge: 'Desktop',
       items: [
         {
-          name: 'Sub-Second ARP Scanning',
-          detail: 'Raw socket frame injection discovers 254 subnet hosts in < 1.0s.',
-          badge: 'Fast',
+          name: 'Find devices in seconds',
+          detail: 'Scan your network and list every device with its IP address, vendor, and hostname.',
         },
         {
-          name: 'Passive DHCP Fingerprinting',
-          detail: 'Sniffs Option 55 parameter requests & Option 60 vendor class identifiers.',
+          name: 'See what each device is',
+          detail: 'Reads DHCP and NetBIOS hints to identify the operating system and device type.',
         },
         {
-          name: 'NetBIOS & OUI Resolution',
-          detail: 'Resolves Windows workstation hostnames & 48,000+ IEEE hardware vendors.',
+          name: 'Limit bandwidth, not just block',
+          detail: 'Throttle a device between 10% and 90% of its speed instead of cutting it off entirely.',
         },
         {
-          name: 'PWM Duty-Cycle Throttling',
-          detail: 'Smooth bandwidth choking (10%–90%) without dropping TCP handshakes.',
-          badge: 'Patented',
+          name: 'Your router stays a target-free zone',
+          detail: 'The gateway is locked out, so you cannot knock the whole network offline by mistake.',
         },
         {
-          name: 'Hardcoded Invariant 1 (Gateway)',
-          detail: 'Default router IP/MAC cannot be spoofed or severed (SpoofError).',
-          badge: 'Immune',
+          name: 'Your own machine is protected',
+          detail: 'Sentinel refuses to cut the connection it is running on.',
         },
         {
-          name: 'Hardcoded Invariant 2 (Controller)',
-          detail: 'Operator host interface is mathematically immune from self-severing.',
-          badge: 'Protected',
-        },
-        {
-          name: 'RFC 1918 Private Scope Check',
-          detail: 'Strict boundary check rejects 0.0.0.0, 255.255.255.255, and public IPs.',
+          name: 'Stays inside your network',
+          detail: 'Only private-range addresses can be acted on; public IPs are rejected.',
         },
       ],
     },
     {
-      title: 'Cloud Fleet Hub',
-      subtitle: 'Centralized multi-seat governance & remote kill-switch',
+      title: 'From the cloud',
+      subtitle: 'Manage your account and devices from anywhere',
       icon: Cloud,
-      badge: 'SaaS Fleet',
+      badge: 'Cloud',
       items: [
         {
-          name: '30s Resilient Heartbeat',
-          detail: 'Continuous health check between desktop client and cloud orchestrator.',
-          badge: 'Real-time',
+          name: 'One account, every machine',
+          detail: 'Sign in on any desktop and your licence and settings follow you.',
         },
         {
-          name: 'Instant Session Kick',
-          detail: 'Revoke rogue or shared login sessions remotely in under 30 seconds.',
-          badge: 'Instant',
+          name: 'Cut a device from anywhere',
+          detail: 'Revoke a session from the web portal; the desktop drops it on the next 30-second check.',
         },
         {
-          name: 'Tier-Enforced Cut Quotas',
-          detail: 'Real-time enforcement of active cut limits per subscription license.',
+          name: 'Device limits per plan',
+          detail: 'Free covers one machine, Pro two, VIP five — enforced by the server, not the app.',
         },
         {
-          name: 'Zero-HWID Privacy Architecture',
-          detail: 'Zero disk serials, MAC addresses, or CPU hashes collected or stored.',
-          badge: 'Privacy',
+          name: 'See where you are signed in',
+          detail: 'Review each session’s device, IP address, and last-seen time from the dashboard.',
         },
         {
-          name: 'Asymmetric RS256 Authentication',
-          detail: 'Stateless cryptographically signed JWT tokens with rotation guards.',
+          name: 'Keeps working offline',
+          detail: 'Your licence stays valid for a 7-day grace window when the cloud is unreachable.',
         },
         {
-          name: 'Multi-Device Session Management',
-          detail: 'View client IP, browser user-agent, and last heartbeat timestamps.',
-        },
-        {
-          name: 'Fail-Closed Network Guard',
-          detail: 'Auto-reblocks or safely restores ARP tables upon session termination.',
+          name: 'Restores the network on exit',
+          detail: 'When a session ends, blocked devices are safely returned to normal.',
         },
       ],
     },
     {
-      title: 'Engineering Rigor',
-      subtitle: 'Enterprise-grade code hygiene & full test coverage',
-      icon: Terminal,
-      badge: 'Standards',
+      title: 'Built to trust',
+      subtitle: 'How your privacy and security are handled',
+      icon: Shield,
+      badge: 'Security',
       items: [
         {
-          name: '562 Automated Test Suite',
-          detail: 'Continuous integration running 434 Python + 128 Node.js unit tests.',
-          badge: '100% Green',
+          name: 'No hardware tracking',
+          detail: 'No disk serials, MAC addresses, or CPU IDs are ever collected or stored.',
         },
         {
-          name: 'Strict TypeScript Everywhere',
-          detail: 'Zero implicit any, full type safety across both frontend and backend.',
+          name: 'Signed licences',
+          detail: 'Every licence is signed with RS256 and verified on your machine, even offline.',
         },
         {
-          name: 'Zod Runtime Schema Validation',
-          detail: 'All incoming HTTP payloads, query params, and WebSocket events validated.',
+          name: 'Your LAN data stays local',
+          detail: 'The cloud never receives the device names, IP addresses, or traffic on your network.',
         },
         {
-          name: 'Pino ECS Structured Logging',
-          detail: 'Standardized JSON logs with correlation IDs for seamless log shipping.',
+          name: 'Checked before it runs',
+          detail: 'Every request to the server is validated, so malformed input is rejected safely.',
         },
         {
-          name: 'SQLite 3 WAL Concurrency',
-          detail: 'Write-Ahead Logging prevents database locks during high-volume scans.',
-        },
-        {
-          name: 'Tailwind Design System',
-          detail: 'Strict design tokens adhering to Warm Editorial Paper aesthetics.',
-        },
-        {
-          name: 'Docker & Compose Ready',
-          detail: 'Containerized multi-stage builds ready for production Kubernetes or VPS.',
+          name: 'Covered by tests',
+          detail: '562 automated tests (430 Python, 132 Node) run on every change.',
         },
       ],
     },
@@ -141,15 +117,14 @@ export const FeatureMatrix: React.FC = () => {
       <div className="text-center max-w-3xl mx-auto mb-16">
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand/5 border border-brand/15 text-brand text-xs font-mono tracking-wider uppercase mb-4">
           <Shield className="w-3.5 h-3.5" />
-          <span>Capability Matrix</span>
+          <span>What you get</span>
         </div>
         <h2 className="text-3xl sm:text-5xl font-sans font-bold tracking-tight text-foreground leading-[1.15] mb-5">
-          Engineered to the most exacting{' '}
-          <span className="font-serif italic font-normal text-brand">standards</span>.
+          Everything Sentinel does, in{' '}
+          <span className="font-serif italic font-normal text-brand">plain terms</span>.
         </h2>
         <p className="text-muted text-base sm:text-lg leading-relaxed">
-          Compare the core capabilities powering the Spoorf Sentinel engine, cloud fleet coordination,
-          and production security architecture.
+          What runs on your machine, what the cloud adds, and how your data is kept private.
         </p>
       </div>
 

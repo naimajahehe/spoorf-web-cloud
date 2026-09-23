@@ -4,28 +4,28 @@ import { Gauge, ShieldCheck, Zap, RefreshCw } from 'lucide-react';
 export const MissionLead: React.FC = () => {
   const metrics = [
     {
-      value: '< 1.0s',
-      label: 'Sub-Second Host Discovery',
-      detail: 'Raw ARP sweeps & passive DHCP Option 55/60 identification',
-      icon: Zap,
+      value: '30s',
+      label: 'Remote session control',
+      detail: 'Revoke a device from the web portal and it drops on the next heartbeat.',
+      icon: RefreshCw,
     },
     {
-      value: '100k+',
-      label: 'Packets / Sec Injected',
-      detail: 'High-speed Scapy & Windows Npcap raw Ethernet injection',
+      value: '7 days',
+      label: 'Works offline',
+      detail: 'Your licence keeps working during the grace window when the cloud is unreachable.',
       icon: Gauge,
     },
     {
-      value: '0ms',
-      label: 'Gateway Disruption',
-      detail: 'Zero collateral damage with hardcoded Invariant 1 immunity',
+      value: 'RS256',
+      label: 'Signed licences',
+      detail: 'Every licence token is cryptographically signed and verified on your own machine.',
       icon: ShieldCheck,
     },
     {
-      value: '30s',
-      label: 'Cloud Fleet Heartbeat',
-      detail: 'Sub-minute remote session kick & sliding 7-day grace period',
-      icon: RefreshCw,
+      value: 'Zero',
+      label: 'Hardware IDs stored',
+      detail: 'No disk serials, MAC addresses, or CPU hashes are ever collected.',
+      icon: Zap,
     },
   ];
 
@@ -38,10 +38,9 @@ export const MissionLead: React.FC = () => {
       </h2>
 
       <p className="mt-6 text-sm sm:text-base text-ink/80 max-w-2xl mx-auto leading-relaxed text-balance font-sans">
-        Unmonitored devices on Layer 2 are the blind spot of every private network: rogue
-        occupants consuming bandwidth, spoofing attacks, and untracked sessions. Sentinel brings
-        zero-collateral Layer 2 manipulation, real-time packet telemetry, and cloud fleet
-        authorization under one neutral surface.
+        Unknown devices on your local network go unnoticed until they slow it down or misbehave.
+        Sentinel shows you every device on the network, lets you limit or cut off the ones that
+        shouldn't be there, and keeps your router and your own machine off-limits the whole time.
       </p>
 
       {/* 4-Column Proof Metric Ticker */}
