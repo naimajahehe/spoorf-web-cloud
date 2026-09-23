@@ -17,6 +17,7 @@ describe('End-to-End Session & Download API Suite', () => {
   let tokenUserB: string;
   let sessionA1: any;
   let sessionA2: any;
+  let webSessionA: any;
 
   before(async () => {
     const app = createApp();
@@ -59,6 +60,14 @@ describe('End-to-End Session & Download API Suite', () => {
       },
     });
 
+    // Web portal sessions the test tokens are bound to (authGuard requires a live session)
+    webSessionA = await prisma.session.create({
+      data: { userId: userA.id, sessionId: crypto.randomUUID(), platform: 'web' },
+    });
+    const webSessionB = await prisma.session.create({
+      data: { userId: userB.id, sessionId: crypto.randomUUID(), platform: 'web' },
+    });
+
     // Generate RS256 tokens using getDefaultCryptoSigner()
     const signer = getDefaultCryptoSigner();
     tokenUserA = signer.signLicenseToken({
@@ -71,6 +80,7 @@ describe('End-to-End Session & Download API Suite', () => {
       canGateway: true,
       canAutoreblock: true,
       canArsenal: false,
+      sessionId: webSessionA.sessionId,
     });
 
     tokenUserB = signer.signLicenseToken({
@@ -83,6 +93,7 @@ describe('End-to-End Session & Download API Suite', () => {
       canGateway: false,
       canAutoreblock: false,
       canArsenal: false,
+      sessionId: webSessionB.sessionId,
     });
 
     // Seed test sessions for User A
@@ -182,7 +193,7 @@ describe('End-to-End Session & Download API Suite', () => {
     assert.equal(body.error.code, 'NOT_FOUND');
   });
 
-  test('5. POST /v1/sessions/revoke-all with User A token -> 200, revokes all active sessions for User A', async () => {
+  test('5. POST /v1/sessions/revoke-all with User A token -> 200, revokes all other active sessions for User A', async () => {
     const res = await fetch(`${baseUrl}/v1/sessions/revoke-all`, {
       method: 'POST',
       headers: {
@@ -199,7 +210,8 @@ describe('End-to-End Session & Download API Suite', () => {
         isRevoked: false,
       },
     });
-    assert.equal(activeSessions.length, 0);
+    // Only the web session that issued the request stays active
+    assert.deepEqual(activeSessions.map((s) => s.id), [webSessionA.id]);
   });
 
   test('6. GET /v1/download/latest -> 200, returns release metadata (version, filename, downloadUrl)', async () => {

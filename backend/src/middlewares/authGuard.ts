@@ -52,17 +52,21 @@ export async function requireAuth(
       throw new UnauthorizedError('Token otentikasi tidak sah atau telah dimodifikasi.');
     }
 
-    // Check if session has been revoked (Kick Mechanism)
-    if (decoded.sessionId) {
-      const dbSession = await prisma.session.findUnique({
-        where: { sessionId: decoded.sessionId }
-      });
+    // Every token must be bound to a live session owned by the same user, otherwise
+    // revoke / kick / logout could never invalidate it (Kick Mechanism).
+    if (!decoded.sessionId) {
+      throw new UnauthorizedError('Token tidak terikat ke sesi perangkat. Silakan login kembali.');
+    }
 
-      if (dbSession && dbSession.isRevoked) {
-        throw new SessionRevokedError(
-          dbSession.revokedReason || 'Sesi Anda telah dicabut karena login baru di perangkat lain.'
-        );
-      }
+    const dbSession = await prisma.session.findUnique({
+      where: { sessionId: decoded.sessionId }
+    });
+
+    if (!dbSession || dbSession.isRevoked || dbSession.userId !== decoded.userId) {
+      throw new SessionRevokedError(
+        (dbSession?.isRevoked && dbSession.revokedReason) ||
+          'Sesi Anda telah dicabut karena login baru di perangkat lain.'
+      );
     }
 
     req.user = {

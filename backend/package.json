@@ -7,7 +7,7 @@
     "dev": "tsx watch src/server.ts",
     "build": "tsc",
     "start": "node dist/server.js",
-    "test": "tsx --test tests/**/*.test.ts",
+    "test": "tsx --import ./tests/setup.ts --test tests/**/*.test.ts",
     "seed": "tsx src/scripts/seed.ts",
     "keys:generate": "tsx src/scripts/generateKeys.ts",
     "prisma:generate": "prisma generate",

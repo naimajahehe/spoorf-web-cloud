@@ -1,3 +1,4 @@
+import 'dotenv/config';
 import { PrismaClient } from '@prisma/client';
 
 declare global {
@@ -5,8 +6,29 @@ declare global {
   var __prisma: PrismaClient | undefined;
 }
 
+/**
+ * Refuse to run the test suite against a non-test database. Tests create and
+ * delete rows freely, so pointing them at dev/staging data is destructive.
+ */
+function assertTestDatabase(url: string | undefined): void {
+  if (process.env.NODE_ENV !== 'test') return;
+  let dbName = '';
+  try {
+    dbName = url ? new URL(url).pathname.replace(/^\//, '') : '';
+  } catch {
+    // fall through to the error below
+  }
+  if (!dbName.endsWith('_test')) {
+    throw new Error(
+      `[Database] NODE_ENV=test but resolved database "${dbName || 'unknown'}" is not a *_test database. ` +
+      'Set TEST_DATABASE_URL to a dedicated test database.'
+    );
+  }
+}
+
 export function createPrismaClient(urlOverride?: string): PrismaClient {
   const effectiveUrl = urlOverride || (process.env.NODE_ENV === 'test' && process.env.TEST_DATABASE_URL ? process.env.TEST_DATABASE_URL : undefined);
+  assertTestDatabase(effectiveUrl || process.env.DATABASE_URL);
   return new PrismaClient({
     datasources: effectiveUrl ? { db: { url: effectiveUrl } } : undefined,
     log: process.env.NODE_ENV === 'development'

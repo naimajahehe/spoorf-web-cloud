@@ -20,7 +20,15 @@ const envSchema = z.object({
 
   MIDTRANS_SERVER_KEY: z.string().default('SB-Mid-server-demo'),
   MIDTRANS_CLIENT_KEY: z.string().default('SB-Mid-client-demo'),
-  MIDTRANS_IS_PRODUCTION: z.coerce.boolean().default(false),
+  // z.coerce.boolean() turns the string "false" into true, so parse explicitly.
+  MIDTRANS_IS_PRODUCTION: z.preprocess((v) => v === 'true' || v === true, z.boolean()).default(false),
+
+  // Express `trust proxy`: "false" (default, direct exposure), "true", or the number of proxy hops.
+  TRUST_PROXY: z
+    .string()
+    .default('false')
+    .transform((v): boolean | number => (v === 'true' ? true : v === 'false' ? false : Number(v)))
+    .refine((v) => typeof v === 'boolean' || (Number.isInteger(v) && v >= 0), 'TRUST_PROXY must be true, false, or a hop count'),
 });
 
 function loadConfig() {

@@ -49,7 +49,23 @@ export function errorHandler(
     return;
   }
 
-  // 3. Prisma Known Errors
+  // 3. Body-parser errors (malformed JSON, oversized payload)
+  const bodyParserType = (err as { type?: string }).type;
+  if (bodyParserType === 'entity.parse.failed' || bodyParserType === 'entity.too.large') {
+    const isTooLarge = bodyParserType === 'entity.too.large';
+    res.status(isTooLarge ? 413 : 400).json({
+      success: false,
+      error: {
+        code: isTooLarge ? 'PAYLOAD_TOO_LARGE' : 'INVALID_JSON',
+        message: isTooLarge ? 'Ukuran request melebihi batas yang diizinkan.' : 'Body request bukan JSON yang valid.',
+        timestamp,
+        requestId,
+      },
+    });
+    return;
+  }
+
+  // 4. Prisma Known Errors
   if (err instanceof Prisma.PrismaClientKnownRequestError) {
     if (err.code === 'P2002') {
       const target = Array.isArray(err.meta?.target) ? err.meta.target.join(', ') : 'field';
@@ -79,7 +95,7 @@ export function errorHandler(
     }
   }
 
-  // 4. Unexpected Unhandled Errors (500)
+  // 5. Unexpected Unhandled Errors (500)
   logger.error(`Unhandled Exception: ${err.message}`, { stack: err.stack }, requestId);
 
   res.status(500).json({
