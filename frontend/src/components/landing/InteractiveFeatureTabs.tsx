@@ -34,38 +34,38 @@ export const InteractiveFeatureTabs: React.FC = () => {
   const tabs: TabItem[] = [
     {
       id: 'discovery',
-      title: 'Autonomous L2 Discovery',
-      badge: 'L2 Engine',
-      headline: 'Sub-Second Host Fingerprinting',
+      title: 'See every device',
+      badge: 'Discovery',
+      headline: 'Know what is on your network',
       description:
-        'Combines raw ARP broadcast sweeps, passive DHCP Option 55/60 profiling, and NetBIOS probing to identify OS, vendor, and hostname in under 800ms.',
+        'Scans your network and lists each device with its IP address, vendor, operating system, and hostname — nothing to install on the other devices.',
       icon: Search,
     },
     {
       id: 'throttling',
-      title: 'Precision PWM Limiter',
-      badge: 'Bandwidth Shaping',
-      headline: 'Microsecond Duty-Cycle Throttling',
+      title: 'Limit bandwidth',
+      badge: 'Bandwidth',
+      headline: 'Slow a device without cutting it off',
       description:
-        'Throttles rogue hosts from 10% to 90% bandwidth without TCP drop penalties using Scapy microsecond pulse-width modulation (PWM).',
+        'Set any device between 10% and 90% of its normal speed, so you can ease off a bandwidth hog without kicking it off the network entirely.',
       icon: Gauge,
     },
     {
       id: 'invariants',
-      title: 'Zero-Collateral Invariants',
-      badge: 'Kernel Guard',
-      headline: 'Mathematical Router & Self Immunity',
+      title: 'Safe by design',
+      badge: 'Safety',
+      headline: 'Your router and your PC are off-limits',
       description:
-        'Hardcoded architectural invariants prevent collateral damage. Gateway router (Invariant 1) and operator PC (Invariant 2) can never be targeted or spoofed.',
+        'The gateway and the machine you are running on can never be targeted, so a wrong click cannot take the whole network down.',
       icon: ShieldCheck,
     },
     {
       id: 'fleet',
-      title: 'Cloud Fleet & Remote Kick',
-      badge: 'Fleet Governance',
-      headline: '30s Heartbeat & Session Revocation',
+      title: 'Manage from the web',
+      badge: 'Cloud',
+      headline: 'Cut access from anywhere',
       description:
-        'Manage desktop licenses across multiple machines. Cut access from anywhere via web portal with sub-minute session termination and instant dialog alerts.',
+        'Review the devices signed in to your account and revoke any of them from the web portal; the desktop drops the session within 30 seconds.',
       icon: CloudLightning,
     },
   ];
@@ -97,18 +97,17 @@ export const InteractiveFeatureTabs: React.FC = () => {
   };
 
   return (
-    <section id="showcase" className="py-24 px-4 max-w-6xl mx-auto">
+    <section className="py-24 px-4 max-w-6xl mx-auto">
       {/* Section Header */}
       <div className="text-center max-w-3xl mx-auto mb-16">
         <span className="text-[11px] font-mono uppercase tracking-widest text-brand font-bold px-3 py-1 rounded-full bg-brand/10 border border-brand/20">
-          Operational Pillars
+          How it works
         </span>
         <h2 className="text-3xl sm:text-4xl font-sans font-bold tracking-tight text-foreground mt-4">
-          Engineered for zero disruption.
+          Four things Sentinel does well.
         </h2>
         <p className="mt-3 text-sm text-ink/75 leading-relaxed">
-          Explore the core capabilities that power NetCut Sentinel on local networks and cloud
-          clusters.
+          Pick a tab to see how each one works, from finding devices to managing them from the web.
         </p>
       </div>
 
@@ -190,8 +189,8 @@ export const InteractiveFeatureTabs: React.FC = () => {
           <div className="relative z-10 my-6 flex-1 flex flex-col justify-center">
             {/* Tab 0: L2 Discovery Interactive Table */}
             {activeTab === 0 && (
-              <div className="border border-border/80 rounded-xl bg-surface-muted/40 p-4 space-y-2.5 font-sans">
-                <div className="flex items-center justify-between text-[11px] font-mono text-muted-foreground pb-2 border-b border-border/60">
+              <div className="border border-border rounded-xl bg-surface-muted p-4 space-y-2.5 font-sans">
+                <div className="flex items-center justify-between text-[11px] font-mono text-muted-foreground pb-2 border-b border-border">
                   <span>DISCOVERED HOSTS (3 ACTIVE)</span>
                   <span className="text-emerald-600 flex items-center gap-1">
                     <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 status-pulse" />
@@ -228,7 +227,7 @@ export const InteractiveFeatureTabs: React.FC = () => {
                   return (
                     <div
                       key={device.ip}
-                      className="bg-white border border-border/70 rounded-lg p-2.5 flex items-center justify-between text-xs shadow-sm hover:border-brand/30 transition-colors"
+                      className="bg-white border border-border rounded-lg p-2.5 flex items-center justify-between text-xs shadow-sm hover:border-brand/30 transition-colors"
                     >
                       <div className="flex items-center gap-2.5">
                         <div className="w-6 h-6 rounded-md bg-surface-muted flex items-center justify-center text-ink">
@@ -254,7 +253,7 @@ export const InteractiveFeatureTabs: React.FC = () => {
 
             {/* Tab 1: Precision PWM Interactive Speed Slider */}
             {activeTab === 1 && (
-              <div className="border border-border/80 rounded-xl bg-surface-muted/40 p-5 space-y-4">
+              <div className="border border-border rounded-xl bg-surface-muted p-5 space-y-4">
                 <div className="flex items-center justify-between text-xs font-semibold text-foreground">
                   <span>Target: 192.168.1.84 (Unknown Rogue Host)</span>
                   <span className="font-mono text-brand font-bold text-sm">
@@ -283,7 +282,7 @@ export const InteractiveFeatureTabs: React.FC = () => {
                   </div>
                   <div className="bg-white border border-border rounded-lg p-2.5 text-center shadow-sm">
                     <div className="text-[10px] uppercase font-mono text-muted-foreground">
-                      PWM Pulse Delay
+                      Speed limit
                     </div>
                     <div className="text-base font-mono font-bold text-brand mt-0.5">
                       {100 - speedLimit}0 μs
@@ -303,7 +302,7 @@ export const InteractiveFeatureTabs: React.FC = () => {
 
             {/* Tab 2: Zero-Collateral Invariant Shield */}
             {activeTab === 2 && (
-              <div className="border border-border/80 rounded-xl bg-surface-muted/40 p-5 space-y-3">
+              <div className="border border-border rounded-xl bg-surface-muted p-5 space-y-3">
                 <div className="bg-white border border-border rounded-xl p-3.5 flex items-center justify-between shadow-sm">
                   <div className="flex items-center gap-3">
                     <div className="w-8 h-8 rounded-lg bg-cyan-50 border border-cyan-200 text-cyan-700 flex items-center justify-center">
@@ -311,15 +310,15 @@ export const InteractiveFeatureTabs: React.FC = () => {
                     </div>
                     <div>
                       <div className="text-xs font-bold text-foreground">
-                        Invariant 1: Fiber Gateway Router (192.168.1.1)
+                        Your router (192.168.1.1)
                       </div>
                       <div className="text-[10px] text-muted-foreground font-mono">
-                        Hardware Immunity · Spoofing Commands Rejected Immediately
+                        Can never be targeted
                       </div>
                     </div>
                   </div>
                   <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-emerald-50 text-emerald-700 border border-emerald-200 font-semibold">
-                    100% IMMUNE
+                    PROTECTED
                   </span>
                 </div>
 
@@ -330,10 +329,10 @@ export const InteractiveFeatureTabs: React.FC = () => {
                     </div>
                     <div>
                       <div className="text-xs font-bold text-foreground">
-                        Invariant 2: Operator Controller Host (This PC)
+                        This PC (the one you're on)
                       </div>
                       <div className="text-[10px] text-muted-foreground font-mono">
-                        Anti-Self-Cut Protection · Network Adapter Memory-Locked
+                        Can never cut its own connection
                       </div>
                     </div>
                   </div>
@@ -346,7 +345,7 @@ export const InteractiveFeatureTabs: React.FC = () => {
 
             {/* Tab 3: Cloud Fleet Remote Kick Simulation */}
             {activeTab === 3 && (
-              <div className="border border-border/80 rounded-xl bg-surface-muted/40 p-4 space-y-3 font-sans">
+              <div className="border border-border rounded-xl bg-surface-muted p-4 space-y-3 font-sans">
                 <div className="bg-white border border-border rounded-xl p-3.5 flex items-center justify-between shadow-sm">
                   <div className="flex items-center gap-2.5">
                     <Laptop className="w-4 h-4 text-brand" />
@@ -364,7 +363,7 @@ export const InteractiveFeatureTabs: React.FC = () => {
                     onClick={() => setIsKicked(!isKicked)}
                     className="px-2.5 py-1 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 text-[10px] font-bold transition-colors cursor-pointer"
                   >
-                    {isKicked ? 'Sesi Telah Diputuskan' : 'Putuskan Akses (Kick)'}
+                    {isKicked ? 'Access cut' : 'Cut access'}
                   </button>
                 </div>
 
@@ -372,10 +371,10 @@ export const InteractiveFeatureTabs: React.FC = () => {
                   <div className="p-3 bg-rose-950/10 border border-rose-200 rounded-lg text-left text-xs text-rose-800 flex items-start gap-2 animate-fadeIn">
                     <PowerOff className="w-4 h-4 text-rose-600 shrink-0 mt-0.5" />
                     <div>
-                      <span className="font-bold">Notifikasi Desktop Dikirimkan:</span>
+                      <span className="font-bold">The desktop is notified:</span>
                       <p className="text-[11px] text-rose-700 mt-0.5">
-                        Modal dialog "Sesi Telah Berakhir" tampil di layar desktop target sebelum
-                        dialihkan kembali ke halaman login.
+                        A "session ended" message appears on that machine, then it returns to the
+                        sign-in screen.
                       </p>
                     </div>
                   </div>
@@ -386,8 +385,8 @@ export const InteractiveFeatureTabs: React.FC = () => {
 
           {/* Footer note */}
           <div className="relative z-10 pt-3 border-t border-border flex items-center justify-between text-[11px] font-mono text-muted-foreground">
-            <span>Real-time Sentinel Architecture Demo</span>
-            <span className="text-brand font-semibold">v2.41.80 Verified</span>
+            <span>Interactive demo</span>
+            <span className="text-brand font-semibold">v2.41</span>
           </div>
         </div>
       </div>

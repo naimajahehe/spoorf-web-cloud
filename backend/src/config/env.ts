@@ -5,7 +5,7 @@ import path from 'node:path';
 // Load .env file
 dotenv.config();
 
-const envSchema = z.object({
+export const envSchema = z.object({
   PORT: z.coerce.number().int().positive().default(4000),
   NODE_ENV: z.enum(['development', 'production', 'test']).default('development'),
   CLIENT_URL: z.string().default('http://localhost:3000'),
@@ -22,6 +22,18 @@ const envSchema = z.object({
   MIDTRANS_CLIENT_KEY: z.string().default('SB-Mid-client-demo'),
   // z.coerce.boolean() turns the string "false" into true, so parse explicitly.
   MIDTRANS_IS_PRODUCTION: z.preprocess((v) => v === 'true' || v === true, z.boolean()).default(false),
+
+  // Public URL of the desktop installer. Unset (or empty) while no installer is hosted.
+  // The client opens this via window.open, so restrict to http(s): z.string().url() alone would
+  // admit javascript:/data: schemes.
+  DESKTOP_DOWNLOAD_URL: z.preprocess(
+    (v) => (v === '' ? undefined : v),
+    z
+      .string()
+      .url()
+      .refine((v) => /^https?:\/\//i.test(v), 'DESKTOP_DOWNLOAD_URL must be an http(s) URL')
+      .optional()
+  ),
 
   // Express `trust proxy`: "false" (default, direct exposure), "true", or the number of proxy hops.
   TRUST_PROXY: z

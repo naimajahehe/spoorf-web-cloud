@@ -214,7 +214,7 @@ describe('End-to-End Session & Download API Suite', () => {
     assert.deepEqual(activeSessions.map((s) => s.id), [webSessionA.id]);
   });
 
-  test('6. GET /v1/download/latest -> 200, returns release metadata (version, filename, downloadUrl)', async () => {
+  test('6. GET /v1/download/latest -> 200, release metadata without a download link while no installer is hosted', async () => {
     const res = await fetch(`${baseUrl}/v1/download/latest`);
     assert.equal(res.status, 200);
     const body: any = await res.json();
@@ -222,6 +222,7 @@ describe('End-to-End Session & Download API Suite', () => {
     assert.ok(body.release);
     assert.ok(body.release.version);
     assert.ok(body.release.filename);
-    assert.ok(body.release.downloadUrl);
+    assert.equal(body.available, false);
+    assert.equal(body.release.downloadUrl, null);
   });
 });

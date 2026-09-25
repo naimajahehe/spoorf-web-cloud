@@ -86,7 +86,8 @@ export class AuthController {
     try {
       const userId = req.user!.userId;
       const updatedLicense = await this.authService.redeemLicenseKey(userId, req.body.key);
-      // authGuard guarantees a bound session; the rotated token carries the new tier as signed claims.
+      // authGuard guarantees a bound session; issueSessionToken rotates the token, carrying the new
+      // tier as signed claims for desktop sessions (web sessions are always signed Free — see #1).
       const token = await this.authService.issueSessionToken(userId, req.sessionContext!.sessionId!);
       res.status(200).json({
         status: 'success',

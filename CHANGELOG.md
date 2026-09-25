@@ -2,6 +2,31 @@
 
 All notable changes to the Spoorf Cloud ecosystem will be documented in this file.
 
+## [v0.0.5] - 2026-09-25
+
+### Security Hardening: Web Session Entitlements, Voucher Stacking, Signing Key Safety & Honest Downloads
+- **Background (audit 2026-09-25)**: every finding below was reproduced against `spoorf_cloud_test` before fixing, and each fix was prototyped in an isolated worktree before implementation.
+  - A login with `platform: "web"` returned a token with the account's paid entitlements that used no device slot. Desktop builds trust only signed claims, so writing that token into the desktop cache gave an extra, uncounted licensed device that heartbeat kept renewing.
+  - Parallel redemptions of different vouchers by one account consumed every voucher but kept only one voucher's days (30/30 stress trials).
+  - `ensureKeyFilesExist` regenerated both keys when either file was missing, overwriting the private key. `backend/keys` holds the keypair embedded in desktop builds (same SPKI fingerprint).
+  - Web logout never reached the server: the axios interceptor ran after the token was cleared (401). Logging in again from the same browser reactivated the revoked session and revived its old tokens, including after a remote "Putuskan".
+  - `/download/latest` advertised `/downloads/Spoorf Sentinel Setup 1.0.0.exe`, which nothing serves (404), with stale metadata (v2.41.79).
+- **Licensing (`authService.ts`)**:
+  - Tokens for sessions stored with `platform: "web"` are signed with Free entitlements on login, register, heartbeat and redeem. The JSON `license` still shows the real tier for the dashboard, and desktop sessions are unchanged (SPEC-008 payload keys unchanged).
+  - Voucher redemption takes the same per-user row lock as `bindSession`, so concurrent redemptions stack.
+- **Crypto (`cryptoSigner.ts`)**:
+  - A lone private or public key file is an error, never replaced. New `allowGenerate` option; `CryptoSigner` refuses to generate keys when `NODE_ENV=production`. Dev/test still bootstrap a keypair when none exists.
+- **Downloads (`releaseService.ts`, `DownloadPage.tsx`)**:
+  - Release metadata reflects desktop v2.41.82. `downloadUrl` comes only from the new optional `DESKTOP_DOWNLOAD_URL`; otherwise the response has `available: false` and the page shows a disabled "Belum tersedia" state. No installer is hosted yet.
+- **Web Portal**:
+  - Logout sends the token explicitly (with a `{}` body; a null body is sent as JSON `"null"` and rejected with 400).
+  - Clearing the stored sign-in (logout or a rejected token) also resets the web session id, so the next login registers a fresh session.
+- **Testing**:
+  - New `unit_license_hardening.test.ts` (5), `unit_release_service.test.ts` (2) and 3 key-safety cases in `unit_crypto.test.ts`; the download E2E case now asserts `available: false`. Backend: 63/63 green.
+  - New Playwright regression test `frontend/scripts/e2e-session-revocation.mjs` (`npm run test:e2e`, 9 checks): it passes on the fixed portal, and 5 checks fail on v0.0.4.
+- **Review follow-ups (code review 2026-09-25)**: `issueSessionToken` fails closed to Free if a session row is unexpectedly absent; `DESKTOP_DOWNLOAD_URL` is restricted to `http(s)` (rejects `javascript:`/`data:`). Backend: 68/68 green.
+- **Known limits (not addressed here)**: two desktops sharing one copied cache (same `session_id`) still count as one slot; revocation is still keyed by `session_id` server-side (a per-login token version is the planned follow-up); web sessions whose token expires without a revoke leave an orphaned active row until "revoke all" (a server-side reaper is the planned follow-up); there are no Prisma migrations yet.
+
 ## [v0.0.4] - 2026-09-23
 
 ### Security Hardening: Session Binding, Atomic Vouchers & Desktop License Contract

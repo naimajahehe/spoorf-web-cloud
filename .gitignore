@@ -43,3 +43,6 @@ Desktop.ini
 !.vscode/settings.json
 !.vscode/tasks.json
 !.vscode/launch.json
+
+# Design review screenshots (local only)
+frontend/review-output/

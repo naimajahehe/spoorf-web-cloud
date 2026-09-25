@@ -23,22 +23,22 @@ export const HeroTopology: React.FC = () => {
       >
         <span className="w-1.5 h-1.5 rounded-full bg-brand" />
         <span>Sentinel v2.41</span>
-        <span className="text-muted-foreground/60">•</span>
-        <span className="text-foreground">Instant 30s Heartbeat & Remote Session Kick</span>
+        <span className="text-ink/40">•</span>
+        <span className="text-foreground">Cut a device from the web portal — it drops within 30 seconds</span>
         <ArrowRight className="w-3 h-3 text-brand group-hover:translate-x-0.5 transition-transform" />
       </a>
 
       {/* Main Editorial Headline with Instrument Serif Italic */}
       <h1 className="text-4xl sm:text-6xl lg:text-[72px] font-sans font-bold tracking-[-0.03em] text-foreground leading-[1.08] max-w-4xl text-balance">
-        One control plane for your network{' '}
-        <span className="font-serif italic font-normal text-brand px-1">fleet</span>.
+        One console for every device on your{' '}
+        <span className="font-serif italic font-normal text-brand px-1">network</span>.
       </h1>
 
       {/* Subheadline */}
       <p className="mt-6 text-sm sm:text-base text-ink/80 max-w-2xl leading-relaxed text-balance">
-        Sentinel gives every network node and operator an autonomous Layer 2 command center:
-        sub-second discovery, precision PWM bandwidth throttling, zero-collateral defense, and
-        cloud fleet synchronization.
+        Sentinel finds every device on your local network in seconds, and lets you slow down or cut
+        off the ones that don't belong. Your router and your own connection stay untouched, and you
+        can manage it all from one machine or from the web.
       </p>
 
       {/* CTA Button Group */}
@@ -47,25 +47,25 @@ export const HeroTopology: React.FC = () => {
           to="/register"
           className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full bg-brand hover:bg-brand-hover text-white text-xs font-semibold tracking-wide shadow-brand-glow hover:shadow-panel transition-all active:scale-[0.98]"
         >
-          <span>Launch Cloud Console</span>
+          <span>Get started free</span>
           <ArrowRight className="w-4 h-4" />
         </Link>
         <Link
           to="/download"
-          className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full bg-white hover:bg-surface-muted/60 border border-border text-foreground text-xs font-semibold tracking-wide shadow-sm hover:shadow-card transition-all"
+          className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full bg-white hover:bg-surface-muted border border-border text-foreground text-xs font-semibold tracking-wide shadow-sm hover:shadow-card transition-all"
         >
           <Download className="w-4 h-4 text-ink" />
-          <span>Download Desktop Agent</span>
+          <span>Download the app</span>
         </Link>
       </div>
 
       {/* Micro Copy Guarantees */}
-      <p className="mt-3.5 text-[11px] text-muted-foreground/70 font-mono">
-        Zero-HWID architecture · No credit card required · Free tier includes 5 active cuts
+      <p className="mt-3.5 text-[11px] text-ink/50 font-mono">
+        No hardware tracking · No credit card required · Free tier covers 5 devices
       </p>
 
       {/* Dynamic Sentinel Fleet Topology Showcase Canvas */}
-      <div className="relative w-full max-w-5xl h-[480px] mt-14 bg-white/70 backdrop-blur-sm border border-border/80 rounded-3xl shadow-panel overflow-hidden p-6 select-none">
+      <div className="relative w-full max-w-5xl h-[480px] mt-14 bg-white/70 backdrop-blur-sm border border-border rounded-3xl shadow-panel overflow-hidden p-6 select-none">
         {/* Subtle Paper Grid Background inside Showcase */}
         <div className="absolute inset-0 bg-grid-paper opacity-70 pointer-events-none" />
 
@@ -140,7 +140,7 @@ export const HeroTopology: React.FC = () => {
           </h4>
           <div className="mt-2.5 flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-white/10 text-[10px] font-mono text-slate-300">
             <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 status-pulse" />
-            <span>100k pkts/sec · 0 drops</span>
+            <span>L2 engine active</span>
           </div>
         </div>
 
@@ -149,14 +149,14 @@ export const HeroTopology: React.FC = () => {
           <div className="flex items-center justify-between mb-1.5">
             <div className="flex items-center gap-1.5">
               <Laptop className="w-3.5 h-3.5 text-emerald-600" />
-              <span className="text-xs font-semibold text-foreground">This PC (Operator)</span>
+              <span className="text-xs font-semibold text-foreground">This PC</span>
             </div>
             <span className="w-2 h-2 rounded-full bg-emerald-600 status-pulse" />
           </div>
           <p className="text-[11px] font-mono text-ink/70">192.168.1.5</p>
           <div className="mt-1.5 inline-flex items-center gap-1 px-1.5 py-0.5 rounded bg-emerald-50 text-[9px] font-mono text-emerald-700 border border-emerald-200">
             <CheckCircle2 className="w-2.5 h-2.5" />
-            <span>Invariant 2 Immune</span>
+            <span>Protected</span>
           </div>
         </div>
 
@@ -172,7 +172,7 @@ export const HeroTopology: React.FC = () => {
           <p className="text-[11px] font-mono text-ink/70">192.168.1.1</p>
           <div className="mt-1.5 inline-flex items-center gap-1 px-1.5 py-0.5 rounded bg-cyan-50 text-[9px] font-mono text-cyan-700 border border-cyan-200">
             <Shield className="w-2.5 h-2.5" />
-            <span>Invariant 1 Protected</span>
+            <span>Protected</span>
           </div>
         </div>
 
@@ -187,7 +187,7 @@ export const HeroTopology: React.FC = () => {
           </div>
           <p className="text-[11px] font-mono text-ink/70">192.168.1.84</p>
           <div className="mt-1.5 inline-flex items-center gap-1 px-1.5 py-0.5 rounded bg-amber-50 text-[9px] font-mono text-amber-700 border border-amber-200">
-            <span>PWM Throttled 25%</span>
+            <span>Throttled to 25%</span>
           </div>
         </div>
 
@@ -202,7 +202,7 @@ export const HeroTopology: React.FC = () => {
           </div>
           <p className="text-[11px] font-mono text-ink/70">api.spoorf.app</p>
           <div className="mt-1.5 inline-flex items-center gap-1 px-1.5 py-0.5 rounded bg-brand/10 text-[9px] font-mono text-brand border border-brand/20">
-            <span>Remote Kick Ready</span>
+            <span>Managed from cloud</span>
           </div>
         </div>
       </div>

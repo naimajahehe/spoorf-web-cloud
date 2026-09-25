@@ -17,10 +17,10 @@ export const App: React.FC = () => {
           {/* Public Warm Editorial Landing Page */}
           <Route path="/" element={<LandingPage />} />
 
-          {/* Operational Console Shell with Dashboard Navbar & Dark Theme */}
+          {/* Console shell: same paper canvas, grid and floating pill navbar as the landing page */}
           <Route
             element={
-              <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col font-sans selection:bg-cyan-500 selection:text-slate-950">
+              <div className="min-h-screen bg-background bg-grid-paper text-foreground flex flex-col font-sans selection:bg-brand selection:text-white">
                 <Navbar />
                 <main className="flex-1">
                   <Outlet />

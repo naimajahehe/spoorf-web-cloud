@@ -4,8 +4,9 @@ const WEB_SESSION_KEY = 'spoorf_web_session_id';
 export const WEB_PLATFORM = 'web';
 
 /**
- * Stable per-browser session id sent on login/register, so the API can bind the
- * token to a revocable session (logout, remote kick, "revoke all").
+ * Per-browser session id sent on login/register, so the API can bind the token to a
+ * revocable session (logout, remote kick, "revoke all"). It lasts until the stored
+ * sign-in is cleared; see `resetWebSessionId`.
  */
 export const getWebSessionId = (): string => {
   let sessionId: string | null = null;
@@ -23,6 +24,18 @@ export const getWebSessionId = (): string => {
     }
   }
   return sessionId;
+};
+
+/**
+ * Forget this browser's session id so the next login registers a new server session.
+ * Reusing a revoked id would reactivate it and revive every token issued for it.
+ */
+export const resetWebSessionId = (): void => {
+  try {
+    localStorage.removeItem(WEB_SESSION_KEY);
+  } catch {
+    // Storage unavailable: ids are already regenerated on every page load.
+  }
 };
 
 const describeBrowser = (): string => {

@@ -67,7 +67,7 @@ export function createApp(): express.Application {
     res.status(isDbConnected ? 200 : 503).json({
       status,
       service: 'spoorf-web-cloud',
-      version: '0.0.4',
+      version: '0.0.5',
       uptimeSeconds: Math.floor(process.uptime()),
       timestamp: new Date().toISOString(),
       database: isDbConnected ? 'connected' : 'disconnected',
