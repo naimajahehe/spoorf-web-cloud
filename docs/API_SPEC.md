@@ -25,6 +25,7 @@ Authoritative specification for client integration (Desktop NetCut Sentinel & We
 - Setiap token RS256 membawa klaim `sessionId` yang wajib menunjuk sesi aktif milik `userId` yang sama. Token tanpa sesi, sesi yang dicabut, atau sesi yang sudah berpindah ke akun lain ditolak dengan `401 SESSION_REVOKED`.
 - `session_id` wajib pada login. Desktop mengirim UUID per instalasi; portal web mengirim UUID per browser dengan `platform: "web"`.
 - Sesi `platform: "web"` dapat dicabut tetapi **tidak** memakai slot perangkat desktop (Free: 1, Pro: 2, VIP: 5).
+- Sejak v0.0.5, token untuk sesi `web` ditandatangani dengan hak **Free** (login, register, heartbeat, redeem), sehingga tidak bisa dipakai sebagai perangkat desktop tambahan. Field JSON `license` pada respons tetap menunjukkan tier akun sebenarnya untuk tampilan dashboard. Platform diambil dari sesi yang tersimpan: login ulang tanpa `platform` tidak mengubahnya.
 - Lisensi berbayar yang melewati `expires_at` dilayani sebagai Free pada login, heartbeat, dan `/auth/me`.
 - Klaim token (`tier`, `maxCuts`, `canThrottle`, `canGateway`, `canAutoreblock`, `canArsenal`, `canDeepFingerprint`, `cloudSync`, `expiresAt`, `gracePeriodUntil`, `sessionId`, `iat`, `exp`, `iss`) adalah sumber lisensi offline desktop setelah diverifikasi dengan public key.
 
@@ -256,3 +257,24 @@ Authoritative specification for client integration (Desktop NetCut Sentinel & We
 - `POST /v1/sessions/:id/revoke` → cabut satu sesi milik pemanggil (berdasarkan `id` atau `sessionId`); sesi milik akun lain → `404 NOT_FOUND`.
 - `POST /v1/sessions/revoke-all` → cabut semua sesi aktif pemanggil **kecuali** sesi yang sedang dipakai untuk request ini. Response: `{ "success": true, "revokedCount": 2, "message": "..." }`.
 - Desktop mendeteksi pencabutan pada heartbeat berikutnya (`401 SESSION_REVOKED`).
+
+---
+
+### 2.9 Latest Desktop Release
+- **Endpoint:** `GET /v1/download/latest` (publik)
+- `downloadUrl` berisi `DESKTOP_DOWNLOAD_URL` bila dikonfigurasi, selain itu `null` dan `available: false`. Klien tidak boleh menyusun URL unduhan sendiri.
+```json
+{
+  "success": true,
+  "available": false,
+  "release": {
+    "version": "2.41.82",
+    "platform": "windows-x64",
+    "filename": "Spoorf Sentinel Setup 2.41.82.exe",
+    "fileSizeBytes": 103946681,
+    "releaseDate": "2026-09-23",
+    "releaseNotes": "...",
+    "downloadUrl": null
+  }
+}
+```
