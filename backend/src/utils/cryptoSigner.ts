@@ -51,13 +51,15 @@ export function generateRsaKeyPair(modulusLength: number = 2048): KeyPairPem {
 }
 
 /**
- * Ensure RSA key files exist on disk idempotently.
- * Creates parent directory and saves files if not already present.
+ * Load the RSA keypair from disk, generating it only when neither file exists.
+ * Desktop builds embed the public key, so an existing keypair is never replaced:
+ * a lone half is an error, and `allowGenerate: false` forbids creating a new pair.
  */
 export function ensureKeyFilesExist(
     privateKeyPath: string,
     publicKeyPath: string,
-    modulusLength: number = 2048
+    modulusLength: number = 2048,
+    options: { allowGenerate?: boolean } = {}
 ): KeyPairPem {
     const privExists = fs.existsSync(privateKeyPath);
     const pubExists = fs.existsSync(publicKeyPath);
@@ -67,6 +69,21 @@ export function ensureKeyFilesExist(
             privateKey: fs.readFileSync(privateKeyPath, 'utf8'),
             publicKey: fs.readFileSync(publicKeyPath, 'utf8')
         };
+    }
+
+    if (privExists || pubExists) {
+        throw new Error(
+            `[Crypto] Found only one half of the RSA keypair (missing: ${privExists ? publicKeyPath : privateKeyPath}). ` +
+            'Refusing to generate a new keypair because it would replace the signing key trusted by desktop clients. ' +
+            'Restore the missing file.'
+        );
+    }
+
+    if (options.allowGenerate === false) {
+        throw new Error(
+            `[Crypto] RSA keypair not found at ${privateKeyPath} and ${publicKeyPath}, and generating one is disabled here. ` +
+            'Provision the keypair whose public key is embedded in the desktop builds.'
+        );
     }
 
     const dirPrivate = path.dirname(privateKeyPath);
@@ -109,7 +126,10 @@ export class CryptoSigner {
                 process.env.JWT_PUBLIC_KEY_PATH ||
                 path.resolve(process.cwd(), 'keys', 'license-public.pem');
 
-            const keys = ensureKeyFilesExist(privPath, pubPath);
+            // A generated key is never the one desktop builds trust, so production must provide it.
+            const keys = ensureKeyFilesExist(privPath, pubPath, 2048, {
+                allowGenerate: process.env.NODE_ENV !== 'production'
+            });
             this.privateKeyPem = keys.privateKey;
             this.publicKeyPem = keys.publicKey;
         }

@@ -176,4 +176,48 @@ describe('RS256 Asymmetric Cryptography & License Signer Suite', () => {
             signer.verifyLicenseToken(token);
         }, /jwt expired/i);
     });
+
+    test('7. ensureKeyFilesExist never replaces a keypair when one half is missing', () => {
+        for (const missing of ['public', 'private'] as const) {
+            const dir = path.join(testKeysDir, `partial-${missing}`);
+            const privPath = path.join(dir, 'private.pem');
+            const pubPath = path.join(dir, 'public.pem');
+            const original = ensureKeyFilesExist(privPath, pubPath);
+            const survivorPath = missing === 'public' ? privPath : pubPath;
+            fs.unlinkSync(missing === 'public' ? pubPath : privPath);
+
+            assert.throws(() => ensureKeyFilesExist(privPath, pubPath), /only one half of the RSA keypair/i);
+
+            const survivor = missing === 'public' ? original.privateKey : original.publicKey;
+            assert.equal(fs.readFileSync(survivorPath, 'utf8'), survivor, `${missing} missing: surviving key must be untouched`);
+        }
+    });
+
+    test('8. ensureKeyFilesExist does not generate keys when generation is disabled', () => {
+        const dir = path.join(testKeysDir, 'no-generate');
+        const privPath = path.join(dir, 'private.pem');
+        const pubPath = path.join(dir, 'public.pem');
+
+        assert.throws(() => ensureKeyFilesExist(privPath, pubPath, 2048, { allowGenerate: false }), /RSA keypair not found/i);
+        assert.equal(fs.existsSync(privPath), false);
+        assert.equal(fs.existsSync(pubPath), false);
+    });
+
+    test('9. CryptoSigner refuses to generate a keypair in production', () => {
+        const dir = path.join(testKeysDir, 'production');
+        const previousEnv = process.env.NODE_ENV;
+        process.env.NODE_ENV = 'production';
+        try {
+            assert.throws(
+                () => new CryptoSigner({
+                    privateKeyPath: path.join(dir, 'private.pem'),
+                    publicKeyPath: path.join(dir, 'public.pem')
+                }),
+                /RSA keypair not found/i
+            );
+        } finally {
+            process.env.NODE_ENV = previousEnv;
+        }
+        assert.equal(fs.existsSync(path.join(dir, 'private.pem')), false);
+    });
 });
