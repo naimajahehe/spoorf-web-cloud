@@ -9,22 +9,19 @@ interface ReleaseMetadata {
   version: string;
   platform: string;
   filename: string;
-  downloadUrl: string;
+  /** Null until the installer is hosted. */
+  downloadUrl: string | null;
   fileSizeBytes: number;
   releaseDate: string;
   releaseNotes: string;
 }
 
-const FALLBACK_RELEASE: ReleaseMetadata = {
-  version: '2.41.79',
-  platform: 'windows-x64',
-  filename: 'Spoorf Sentinel Setup 1.0.0.exe',
-  downloadUrl: '/downloads/Spoorf%20Sentinel%20Setup%201.0.0.exe',
-  fileSizeBytes: 98566144,
-  releaseDate: '2026-09-21',
-  releaseNotes:
-    'Background heartbeat engine, 7-day sliding grace period window, remote kick reconciler, and anti-self-cut security guards.',
-};
+interface LatestReleaseResponse {
+  available: boolean;
+  release: ReleaseMetadata;
+}
+
+type LoadState = 'loading' | 'loaded' | 'error';
 
 const SYSTEM_REQUIREMENTS = [
   { title: 'Sistem operasi', desc: 'Windows 10 atau Windows 11 (64-bit)' },
@@ -55,7 +52,8 @@ const RELEASE_HIGHLIGHTS = [
 ];
 
 export const DownloadPage: React.FC = () => {
-  const [release, setRelease] = useState<ReleaseMetadata>(FALLBACK_RELEASE);
+  const [release, setRelease] = useState<ReleaseMetadata | null>(null);
+  const [loadState, setLoadState] = useState<LoadState>('loading');
 
   useDocumentTitle('Unduh aplikasi');
 
@@ -63,10 +61,12 @@ export const DownloadPage: React.FC = () => {
     let isMounted = true;
     (async () => {
       try {
-        const response = await api.get('/download/latest');
-        if (isMounted && response.data?.release) setRelease(response.data.release);
+        const response = await api.get<LatestReleaseResponse>('/download/latest');
+        if (!isMounted) return;
+        setRelease(response.data?.release ?? null);
+        setLoadState('loaded');
       } catch {
-        // Keep the bundled fallback metadata when the server is unreachable.
+        if (isMounted) setLoadState('error');
       }
     })();
     return () => {
@@ -74,13 +74,20 @@ export const DownloadPage: React.FC = () => {
     };
   }, []);
 
-  const sizeMb = release.fileSizeBytes ? (release.fileSizeBytes / (1024 * 1024)).toFixed(0) : '94';
+  // Only a URL published by the API is offered; nothing is guessed on the client.
+  const downloadUrl = release?.downloadUrl ?? null;
+  const sizeMb = release ? (release.fileSizeBytes / (1024 * 1024)).toFixed(0) : null;
 
   const handleDownload = () => {
-    const base = (api.defaults.baseURL || '').replace(/\/v1\/?$/, '');
-    const url = release.downloadUrl.startsWith('http') ? release.downloadUrl : `${base}${release.downloadUrl}`;
-    window.open(url, '_blank', 'noopener');
+    if (downloadUrl) window.open(downloadUrl, '_blank', 'noopener');
   };
+
+  const availabilityNote =
+    loadState === 'error'
+      ? 'Info rilis tidak dapat dimuat. Coba muat ulang halaman.'
+      : loadState === 'loaded' && !downloadUrl
+        ? 'Installer belum dipublikasikan untuk diunduh.'
+        : 'Butuh akses administrator saat memasang Npcap.';
 
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 py-16 space-y-12">
@@ -100,31 +107,46 @@ export const DownloadPage: React.FC = () => {
           <div>
             <div className="flex items-center gap-2">
               <h2 className="text-xl font-semibold tracking-tight text-foreground">Spoorf Sentinel Client</h2>
-              <span className="text-xs font-mono px-2 py-0.5 rounded-full bg-brand/10 text-brand">v{release.version}</span>
+              {release && (
+                <span className="text-xs font-mono px-2 py-0.5 rounded-full bg-brand/10 text-brand">v{release.version}</span>
+              )}
             </div>
-            <p className="mt-1 text-sm text-ink">{release.filename}</p>
-            <dl className="mt-4 flex flex-wrap gap-x-8 gap-y-2 text-sm">
-              <div>
-                <dt className="text-ink/60">Ukuran</dt>
-                <dd className="font-medium text-foreground">{sizeMb} MB</dd>
-              </div>
-              <div>
-                <dt className="text-ink/60">Arsitektur</dt>
-                <dd className="font-medium text-foreground">{release.platform}</dd>
-              </div>
-              <div>
-                <dt className="text-ink/60">Rilis</dt>
-                <dd className="font-medium text-foreground">{release.releaseDate}</dd>
-              </div>
-            </dl>
+            {release ? (
+              <>
+                <p className="mt-1 text-sm text-ink">{release.filename}</p>
+                <dl className="mt-4 flex flex-wrap gap-x-8 gap-y-2 text-sm">
+                  <div>
+                    <dt className="text-ink/60">Ukuran</dt>
+                    <dd className="font-medium text-foreground">{sizeMb} MB</dd>
+                  </div>
+                  <div>
+                    <dt className="text-ink/60">Arsitektur</dt>
+                    <dd className="font-medium text-foreground">{release.platform}</dd>
+                  </div>
+                  <div>
+                    <dt className="text-ink/60">Rilis</dt>
+                    <dd className="font-medium text-foreground">{release.releaseDate}</dd>
+                  </div>
+                </dl>
+              </>
+            ) : (
+              <p className="mt-1 text-sm text-ink">
+                {loadState === 'loading' ? 'Memuat info rilis…' : 'Info rilis belum tersedia.'}
+              </p>
+            )}
           </div>
 
           <div className="shrink-0">
-            <button type="button" onClick={handleDownload} className={buttonClass('primary', 'lg')}>
+            <button
+              type="button"
+              onClick={handleDownload}
+              disabled={!downloadUrl}
+              className={buttonClass('primary', 'lg')}
+            >
               <Download className="w-4 h-4" />
-              Unduh untuk Windows
+              {downloadUrl ? 'Unduh untuk Windows' : loadState === 'loading' ? 'Memuat…' : 'Belum tersedia'}
             </button>
-            <p className="mt-2 text-xs text-ink/60 text-center">Butuh akses administrator saat memasang Npcap.</p>
+            <p className="mt-2 text-xs text-ink/60 text-center">{availabilityNote}</p>
           </div>
         </div>
       </section>
@@ -147,7 +169,7 @@ export const DownloadPage: React.FC = () => {
         </section>
 
         <section className="rounded-3xl bg-white border border-border shadow-card p-6 sm:p-7">
-          <h2 className="text-lg font-semibold tracking-tight text-foreground">Yang baru di v{release.version}</h2>
+          <h2 className="text-lg font-semibold tracking-tight text-foreground">{release ? `Yang baru di v${release.version}` : 'Yang baru'}</h2>
           <ul className="mt-4 space-y-4">
             {RELEASE_HIGHLIGHTS.map((item) => (
               <li key={item.title}>

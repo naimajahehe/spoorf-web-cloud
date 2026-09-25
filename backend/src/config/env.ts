@@ -23,6 +23,9 @@ const envSchema = z.object({
   // z.coerce.boolean() turns the string "false" into true, so parse explicitly.
   MIDTRANS_IS_PRODUCTION: z.preprocess((v) => v === 'true' || v === true, z.boolean()).default(false),
 
+  // Public URL of the desktop installer. Unset (or empty) while no installer is hosted.
+  DESKTOP_DOWNLOAD_URL: z.preprocess((v) => (v === '' ? undefined : v), z.string().url().optional()),
+
   // Express `trust proxy`: "false" (default, direct exposure), "true", or the number of proxy hops.
   TRUST_PROXY: z
     .string()
