@@ -19,67 +19,67 @@ export const PricingTiers: React.FC = () => {
   const tiers: PricingTier[] = [
     {
       id: 'free',
-      name: 'Community Free',
+      name: 'Free',
       price: '$0',
-      period: 'forever free',
-      description: 'Essential Layer 2 network visibility and fundamental defense for solo operators.',
-      ctaText: 'Get Started Free',
+      period: 'forever',
+      description: 'See your whole network and cut off unwanted devices, on one machine.',
+      ctaText: 'Get started free',
       ctaLink: '/register',
       features: [
-        '1 Active Desktop Client Session',
-        'Max 5 Concurrent Active Device Cuts',
-        'Sub-Second L2 Subnet Discovery',
-        'Hardcoded Invariant 1 (Gateway Router Immune)',
-        'Hardcoded Invariant 2 (Controller Self-Cut Guard)',
-        '30-Second Cloud Heartbeat Sync',
-        'Standard Community Support',
+        'One desktop device at a time',
+        'Cut off up to 5 devices at once',
+        'Full network scan with device details',
+        'Router protected from mistakes',
+        'Your own PC protected',
+        'Sign out remotely within 30 seconds',
+        'Community support',
       ],
     },
     {
       id: 'pro',
-      name: 'Sentinel Pro',
+      name: 'Pro',
       price: '$19',
       period: 'per month',
-      description: 'Uncapped bandwidth control, captive portal redirection, and automated enforcement.',
-      badge: 'Most Popular',
+      description: 'Unlimited devices, bandwidth limiting, and two machines signed in at once.',
+      badge: 'Most popular',
       popular: true,
-      ctaText: 'Start Pro Console',
+      ctaText: 'Choose Pro',
       ctaLink: '/register',
       features: [
-        '2 Concurrent Active Desktop Sessions',
-        'Unlimited Concurrent Device Cuts',
-        'PWM Duty-Cycle Bandwidth Limiting (10%–90%)',
-        'HTTP/HTTPS Captive Portal Redirection',
-        'Automatic Periodic Re-blocking Engine',
-        'Zero-HWID Cryptographic Identity',
-        'Instant Remote Session Revocation (Kick)',
-        'Priority Email & Community Support',
+        'Two desktop devices at a time',
+        'Cut off unlimited devices',
+        'Limit any device to 10%–90% speed',
+        'Captive portal redirection',
+        'Re-blocks a device if it comes back',
+        'No hardware tracking',
+        'Sign out any device remotely',
+        'Priority email support',
       ],
     },
     {
       id: 'vip',
-      name: 'Enterprise VIP',
+      name: 'VIP',
       price: '$49',
       period: 'per month',
-      description: 'Advanced defensive arsenal, deep telemetry, and multi-seat security team orchestration.',
-      badge: 'Full Arsenal',
-      ctaText: 'Deploy VIP Fleet',
+      description: 'Everything in Pro, plus advanced testing tools and support for a whole team.',
+      badge: 'For teams',
+      ctaText: 'Choose VIP',
       ctaLink: '/register',
       features: [
-        '5 Concurrent Active Desktop Sessions',
-        'Unlimited Device Cuts & Fleet Nodes',
-        'Full Bettercap Arsenal Integration',
-        'Autonomous Leaf SSL Certificate Generator',
-        'Deep Passive DHCP & NetBIOS OS Profiling',
-        'Multi-Seat Session Audit Ledger',
-        'Custom Webhook & Telemetry Alerts',
-        'Dedicated SLA & 1-on-1 Architecture Support',
+        'Five desktop devices at a time',
+        'Unlimited devices',
+        'Advanced lab-testing toolkit',
+        'Certificate tooling for testing',
+        'Detailed device and OS detection',
+        'Team session audit log',
+        'Custom alerts and webhooks',
+        'Dedicated support with an SLA',
       ],
     },
   ];
 
   return (
-    <section className="py-24 px-4 sm:px-6 max-w-7xl mx-auto border-t border-border/80">
+    <section className="py-24 px-4 sm:px-6 max-w-7xl mx-auto border-t border-border">
       {/* Header */}
       <div className="text-center max-w-3xl mx-auto mb-16">
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand/5 border border-brand/15 text-brand text-xs font-mono tracking-wider uppercase mb-4">
@@ -91,8 +91,7 @@ export const PricingTiers: React.FC = () => {
           <span className="font-serif italic font-normal text-brand">every operator</span>.
         </h2>
         <p className="text-muted text-base sm:text-lg leading-relaxed">
-          From solo network diagnostics to distributed multi-seat fleet administration.
-          Zero hidden lock-ins, zero hardware tracking.
+          From one machine to a whole team. No hidden fees, and no hardware tracking on any plan.
         </p>
       </div>
 
@@ -105,7 +104,7 @@ export const PricingTiers: React.FC = () => {
               className={`rounded-3xl p-8 sm:p-9 flex flex-col justify-between relative transition-all duration-300 ${
                 tier.popular
                   ? 'bg-white border-2 border-brand shadow-brand-glow -translate-y-2'
-                  : 'bg-white/70 backdrop-blur-sm border border-border/80 shadow-card hover:border-brand/40'
+                  : 'bg-white/70 backdrop-blur-sm border border-border shadow-card hover:border-brand/40'
               }`}
             >
               {/* Most Popular Ribbon */}
@@ -134,7 +133,7 @@ export const PricingTiers: React.FC = () => {
                 </p>
 
                 {/* Price Display */}
-                <div className="mb-6 pb-6 border-b border-border/60">
+                <div className="mb-6 pb-6 border-b border-border">
                   <div className="flex items-baseline gap-1.5">
                     <span className="text-4xl sm:text-5xl font-sans font-bold tracking-tight text-foreground">
                       {tier.price}
@@ -145,9 +144,7 @@ export const PricingTiers: React.FC = () => {
 
                 {/* Features List */}
                 <div className="space-y-3.5 mb-8">
-                  <div className="text-[11px] font-mono tracking-wider uppercase text-muted font-semibold">
-                    INCLUDED CAPABILITIES
-                  </div>
+                  <div className="text-xs text-muted font-semibold">What's included</div>
                   {tier.features.map((feature, idx) => (
                     <div key={idx} className="flex items-start gap-2.5">
                       <div
@@ -191,7 +188,7 @@ export const PricingTiers: React.FC = () => {
         <div className="inline-flex items-center gap-2 text-xs text-muted">
           <Shield className="w-4 h-4 text-emerald-600" />
           <span>
-            No credit card required for Community Free tier. Instant activation upon email verification.
+            No credit card needed for the Free plan. Your account is ready as soon as you sign up.
           </span>
         </div>
       </div>

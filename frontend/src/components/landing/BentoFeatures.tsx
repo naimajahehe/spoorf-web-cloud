@@ -17,22 +17,22 @@ export const BentoFeatures: React.FC = () => {
       <div className="text-center max-w-3xl mx-auto mb-16">
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand/5 border border-brand/15 text-brand text-xs font-mono tracking-wider uppercase mb-4">
           <Layers className="w-3.5 h-3.5" />
-          <span>System Architecture</span>
+          <span>Under the hood</span>
         </div>
         <h2 className="text-3xl sm:text-5xl font-sans font-bold tracking-tight text-foreground leading-[1.15] mb-5">
-          Crafted for absolute Layer 2{' '}
-          <span className="font-serif italic font-normal text-brand">supremacy</span>.
+          How Sentinel is{' '}
+          <span className="font-serif italic font-normal text-brand">built</span>.
         </h2>
         <p className="text-muted text-base sm:text-lg leading-relaxed">
-          Four decoupled layers engineered for sub-millisecond packet injection, zero memory leaks,
-          and uncompromising zero-telemetry privacy.
+          A quick look at the parts that do the work, for the technically curious,
+          and why nothing about your local network leaves your machine.
         </p>
       </div>
 
       {/* Bento Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-6">
         {/* Card 1: Hybrid Microservices (Brand Gradient, 7 cols) */}
-        <div className="lg:col-span-7 texture-wash-brand border border-border/80 rounded-3xl p-8 sm:p-10 shadow-card flex flex-col justify-between relative overflow-hidden group hover:border-brand/40 transition-all duration-300">
+        <div className="lg:col-span-7 texture-wash-brand border border-border rounded-3xl p-8 sm:p-10 shadow-card flex flex-col justify-between relative overflow-hidden group hover:border-brand/40 transition-all duration-300">
           <div className="relative z-10">
             <div className="flex items-center justify-between mb-6">
               <span className="text-xs font-mono tracking-wider uppercase text-brand font-semibold px-2.5 py-1 rounded-md bg-white/70 border border-brand/20">
@@ -42,17 +42,17 @@ export const BentoFeatures: React.FC = () => {
                 <Zap className="w-5 h-5" />
               </div>
             </div>
-            <h3 className="text-2xl sm:text-3xl font-sans font-bold text-foreground mb-3">
-              Tri-Service Decoupled Engine
+            <h3 className="text-2xl sm:text-3xl font-sans font-bold text-white mb-3">
+              Three parts, working together
             </h3>
-            <p className="text-muted text-sm sm:text-base leading-relaxed mb-8 max-w-xl">
-              Python 3.11 Scapy microservice executes raw Layer 2 socket injection, Node.js 20
-              orchestrates stateful Socket.IO telemetry, and React 18 renders responsive 60fps operational visuals.
+            <p className="text-white/80 text-sm sm:text-base leading-relaxed mb-8 max-w-xl">
+              Three parts working together: a Python service handles the network work, a Node.js
+              service keeps everything in sync in real time, and a React interface shows it all clearly.
             </p>
           </div>
 
           {/* Micro-architecture Flow Diagram */}
-          <div className="relative z-10 bg-white/90 backdrop-blur-sm border border-border/70 rounded-2xl p-4 sm:p-5 shadow-sm">
+          <div className="relative z-10 bg-white/90 backdrop-blur-sm border border-border rounded-2xl p-4 sm:p-5 shadow-sm">
             <div className="text-[11px] font-mono text-muted mb-3 flex items-center justify-between">
               <span>INTER-PROCESS COMMUNICATION</span>
               <span className="text-emerald-600 font-medium flex items-center gap-1.5">
@@ -78,26 +78,26 @@ export const BentoFeatures: React.FC = () => {
         </div>
 
         {/* Card 2: Zero-HWID Privacy (Mint Gradient, 5 cols) */}
-        <div className="lg:col-span-5 texture-wash-mint border border-border/80 rounded-3xl p-8 sm:p-10 shadow-card flex flex-col justify-between relative overflow-hidden group hover:border-emerald-500/40 transition-all duration-300">
+        <div className="lg:col-span-5 texture-wash-mint border border-border rounded-3xl p-8 sm:p-10 shadow-card flex flex-col justify-between relative overflow-hidden group hover:border-emerald-500/40 transition-all duration-300">
           <div className="relative z-10">
             <div className="flex items-center justify-between mb-6">
               <span className="text-xs font-mono tracking-wider uppercase text-emerald-800 font-semibold px-2.5 py-1 rounded-md bg-white/70 border border-emerald-500/20">
-                Zero-HWID Privacy
+No hardware tracking
               </span>
               <div className="w-9 h-9 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-700">
                 <Fingerprint className="w-5 h-5" />
               </div>
             </div>
             <h3 className="text-2xl font-sans font-bold text-foreground mb-3">
-              Cryptographic Identity Over Hardware Tracking
+              Your account, not your hardware
             </h3>
             <p className="text-muted text-sm sm:text-base leading-relaxed mb-6">
-              No hardware serials, MAC telemetry, or disk IDs ever leave your premises.
-              Authentication uses asymmetric RS256 cryptographic signatures.
+              Sentinel identifies you by your signed-in account, not by your hardware. No disk serials,
+              MAC addresses, or CPU IDs are read or sent, and each licence is verified with an RS256 signature.
             </p>
           </div>
 
-          <div className="relative z-10 bg-white/90 backdrop-blur-sm border border-border/70 rounded-2xl p-4 shadow-sm space-y-2">
+          <div className="relative z-10 bg-white/90 backdrop-blur-sm border border-border rounded-2xl p-4 shadow-sm space-y-2">
             <div className="flex items-center justify-between text-xs">
               <span className="font-sans font-medium text-foreground flex items-center gap-2">
                 <Lock className="w-3.5 h-3.5 text-emerald-600" />
@@ -133,10 +133,11 @@ export const BentoFeatures: React.FC = () => {
               </div>
             </div>
             <h3 className="text-2xl font-sans font-bold text-white mb-3">
-              Bettercap Arsenal & Captive Redirection
+              Advanced tools for lab testing
             </h3>
             <p className="text-slate-400 text-sm sm:text-base leading-relaxed mb-6">
-              Integrated DNS sinkholes, HTTP captive gateway rerouting, and autonomous leaf SSL certificate generation for controlled network testing.
+              For controlled security testing on networks you own, VIP adds DNS redirection, a captive
+              gateway, and certificate tooling built on Bettercap.
             </p>
           </div>
 
@@ -161,27 +162,27 @@ export const BentoFeatures: React.FC = () => {
         </div>
 
         {/* Card 4: Dual-Tier Persistence (Paper Grid, 7 cols) */}
-        <div className="lg:col-span-7 bg-white/80 border border-border/80 rounded-3xl p-8 sm:p-10 shadow-card bg-grid-paper flex flex-col justify-between relative overflow-hidden group hover:border-brand/40 transition-all duration-300">
+        <div className="lg:col-span-7 bg-white/80 border border-border rounded-3xl p-8 sm:p-10 shadow-card bg-grid-paper flex flex-col justify-between relative overflow-hidden group hover:border-brand/40 transition-all duration-300">
           <div className="relative z-10">
             <div className="flex items-center justify-between mb-6">
               <span className="text-xs font-mono tracking-wider uppercase text-brand font-semibold px-2.5 py-1 rounded-md bg-white/70 border border-brand/20">
-                Continuous Persistence
+                Where data lives
               </span>
               <div className="w-9 h-9 rounded-xl bg-brand/10 border border-brand/20 flex items-center justify-center text-brand">
                 <Database className="w-5 h-5" />
               </div>
             </div>
             <h3 className="text-2xl sm:text-3xl font-sans font-bold text-foreground mb-3">
-              Dual-Tier Hybrid Persistence
+              Local data stays local
             </h3>
             <p className="text-muted text-sm sm:text-base leading-relaxed mb-6 max-w-xl">
-              Ultra-low latency local SQLite 3 in WAL mode guarantees sub-millisecond host cache lookups without locking.
-              Cloud fleet state aggregates to PostgreSQL 17 for multi-seat governance.
+              Device scans and history are kept on your own machine in a local database. Only your account
+              and session details are stored in the cloud, so your network activity never leaves your PC.
             </p>
           </div>
 
           <div className="relative z-10 grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <div className="bg-white/90 border border-border/70 rounded-2xl p-4 shadow-sm">
+            <div className="bg-white/90 border border-border rounded-2xl p-4 shadow-sm">
               <div className="flex items-center justify-between mb-1.5">
                 <span className="font-mono text-xs font-bold text-foreground">Local SQLite 3</span>
                 <span className="text-[10px] font-mono font-semibold px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-700 border border-emerald-200">
@@ -194,7 +195,7 @@ export const BentoFeatures: React.FC = () => {
               </div>
             </div>
 
-            <div className="bg-white/90 border border-border/70 rounded-2xl p-4 shadow-sm">
+            <div className="bg-white/90 border border-border rounded-2xl p-4 shadow-sm">
               <div className="flex items-center justify-between mb-1.5">
                 <span className="font-mono text-xs font-bold text-foreground">Cloud PostgreSQL 17</span>
                 <span className="text-[10px] font-mono font-semibold px-1.5 py-0.5 rounded bg-brand/5 text-brand border border-brand/15">

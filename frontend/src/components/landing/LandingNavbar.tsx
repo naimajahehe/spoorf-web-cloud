@@ -1,37 +1,25 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import { Shield, ArrowRight, Menu, X, Download, User } from 'lucide-react';
+import { ArrowRight, Menu, X, Download, User } from 'lucide-react';
+import { BrandMark } from '../ui/BrandMark';
 
 export const LandingNavbar: React.FC = () => {
   const { isAuthenticated, user } = useAuth();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const navLinks = [
-    { label: 'Product', href: '#showcase' },
-    { label: 'Features', href: '#features' },
-    { label: 'Architecture', href: '#architecture' },
+    { label: 'How it works', href: '#showcase' },
+    { label: 'What you get', href: '#architecture' },
+    { label: 'Under the hood', href: '#features' },
     { label: 'Pricing', href: '#pricing' },
   ];
 
   return (
     <header className="sticky top-4 z-50 max-w-6xl mx-auto px-4 w-full select-none">
       <div className="bg-white/85 backdrop-blur-md border border-border shadow-card rounded-full px-5 py-2.5 flex items-center justify-between transition-all">
-        {/* Brand Monogram */}
-        <Link to="/" className="flex items-center gap-2.5 group">
-          <div className="w-8 h-8 rounded-full bg-foreground text-background flex items-center justify-center shadow-sm group-hover:scale-105 transition-transform">
-            <Shield className="w-4 h-4 text-brand" />
-          </div>
-          <div className="flex items-center gap-1.5">
-            <span className="font-sans font-bold tracking-tight text-foreground text-sm">
-              SPOORF
-            </span>
-            <span className="text-[10px] font-mono uppercase px-1.5 py-0.5 rounded bg-brand/10 text-brand font-semibold tracking-wider">
-              Fleet
-            </span>
-          </div>
-          <span className="w-2 h-2 rounded-full bg-emerald-600 status-pulse ml-0.5" title="Cloud Fleet Active" />
-        </Link>
+        {/* Brand Monogram (shared with the console navbar) */}
+        <BrandMark to="/" tag="Fleet" />
 
         {/* Desktop Navigation Links */}
         <nav className="hidden md:flex items-center gap-7">
@@ -65,7 +53,7 @@ export const LandingNavbar: React.FC = () => {
                 to="/dashboard"
                 className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-brand hover:bg-brand-hover text-white text-xs font-medium transition-all shadow-brand-glow hover:shadow-panel"
               >
-                <span>Buka Dashboard</span>
+                <span>Open dashboard</span>
                 <ArrowRight className="w-3.5 h-3.5" />
               </Link>
             </div>
@@ -75,13 +63,13 @@ export const LandingNavbar: React.FC = () => {
                 to="/login"
                 className="text-xs font-medium text-ink hover:text-foreground px-3 py-1.5 transition-colors"
               >
-                Sign In
+                Sign in
               </Link>
               <Link
                 to="/register"
                 className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-brand hover:bg-brand-hover text-white text-xs font-medium transition-all shadow-brand-glow hover:shadow-panel active:scale-[0.98]"
               >
-                <span>Launch Console</span>
+                <span>Get started</span>
                 <ArrowRight className="w-3.5 h-3.5" />
               </Link>
             </div>
@@ -118,7 +106,7 @@ export const LandingNavbar: React.FC = () => {
             className="text-sm font-medium text-ink py-1 hover:text-foreground transition-colors flex items-center gap-2"
           >
             <Download className="w-4 h-4 text-brand" />
-            <span>Download Desktop Agent</span>
+            <span>Download the app</span>
           </Link>
           <div className="pt-2 border-t border-border flex flex-col gap-2">
             {isAuthenticated ? (
@@ -127,7 +115,7 @@ export const LandingNavbar: React.FC = () => {
                 onClick={() => setMobileMenuOpen(false)}
                 className="w-full text-center py-2 rounded-xl bg-brand text-white text-xs font-medium"
               >
-                Buka Dashboard
+                Open dashboard
               </Link>
             ) : (
               <>
@@ -136,14 +124,14 @@ export const LandingNavbar: React.FC = () => {
                   onClick={() => setMobileMenuOpen(false)}
                   className="w-full text-center py-2 rounded-xl border border-border text-ink text-xs font-medium"
                 >
-                  Sign In
+                  Sign in
                 </Link>
                 <Link
                   to="/register"
                   onClick={() => setMobileMenuOpen(false)}
                   className="w-full text-center py-2 rounded-xl bg-brand text-white text-xs font-medium shadow-brand-glow"
                 >
-                  Launch Console
+                  Get started
                 </Link>
               </>
             )}
