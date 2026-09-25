@@ -24,7 +24,8 @@ All notable changes to the Spoorf Cloud ecosystem will be documented in this fil
 - **Testing**:
   - New `unit_license_hardening.test.ts` (5), `unit_release_service.test.ts` (2) and 3 key-safety cases in `unit_crypto.test.ts`; the download E2E case now asserts `available: false`. Backend: 63/63 green.
   - New Playwright regression test `frontend/scripts/e2e-session-revocation.mjs` (`npm run test:e2e`, 9 checks): it passes on the fixed portal, and 5 checks fail on v0.0.4.
-- **Known limits (not addressed here)**: two desktops sharing one copied cache (same `session_id`) still count as one slot; revocation is still keyed by `session_id` server-side (a per-login token version is the planned follow-up); there are no Prisma migrations yet.
+- **Review follow-ups (code review 2026-09-25)**: `issueSessionToken` fails closed to Free if a session row is unexpectedly absent; `DESKTOP_DOWNLOAD_URL` is restricted to `http(s)` (rejects `javascript:`/`data:`). Backend: 68/68 green.
+- **Known limits (not addressed here)**: two desktops sharing one copied cache (same `session_id`) still count as one slot; revocation is still keyed by `session_id` server-side (a per-login token version is the planned follow-up); web sessions whose token expires without a revoke leave an orphaned active row until "revoke all" (a server-side reaper is the planned follow-up); there are no Prisma migrations yet.
 
 ## [v0.0.4] - 2026-09-23
 
