@@ -173,26 +173,35 @@ export class AuthService {
     this.db = db;
   }
 
+  /**
+   * Web portal sessions do not occupy a desktop device slot, so their tokens are signed with
+   * Free entitlements. Desktop clients trust only these signed claims; otherwise a web login
+   * would be an uncounted licensed device. `sessionPlatform` must come from the stored session.
+   */
   private signToken(
     user: { id: string; email: string; role: string },
     license: LicenseFields,
     sessionId: string,
+    sessionPlatform: string | null,
     gracePeriodUntil: string
   ): string {
+    const entitlements: LicenseFields =
+      sessionPlatform === WEB_PLATFORM ? { ...tierTemplate(LicenseTier.FREE), expiresAt: null } : license;
+
     return getDefaultCryptoSigner().signLicenseToken({
       userId: user.id,
       email: user.email,
       role: user.role,
-      tier: license.tier.toLowerCase() as 'free' | 'pro' | 'vip',
-      maxCuts: license.maxCuts,
-      canThrottle: license.canThrottle,
-      canGateway: license.canGateway,
-      canAutoreblock: license.canAutoreblock,
-      canArsenal: license.canArsenal,
-      canDeepFingerprint: license.canDeepFingerprint,
-      cloudSync: license.cloudSync,
+      tier: entitlements.tier.toLowerCase() as 'free' | 'pro' | 'vip',
+      maxCuts: entitlements.maxCuts,
+      canThrottle: entitlements.canThrottle,
+      canGateway: entitlements.canGateway,
+      canAutoreblock: entitlements.canAutoreblock,
+      canArsenal: entitlements.canArsenal,
+      canDeepFingerprint: entitlements.canDeepFingerprint,
+      cloudSync: entitlements.cloudSync,
       sessionId,
-      expiresAt: license.expiresAt ? license.expiresAt.toISOString() : null,
+      expiresAt: entitlements.expiresAt ? entitlements.expiresAt.toISOString() : null,
       gracePeriodUntil,
     });
   }
@@ -200,6 +209,7 @@ export class AuthService {
   /**
    * Binds `sessionId` to `userId` and enforces the concurrent desktop device limit.
    * Runs under a per-user row lock so parallel logins cannot exceed the slot limit.
+   * Returns the stored platform, which a re-login without `platform` leaves unchanged.
    */
   private async bindSession(
     userId: string,
@@ -207,10 +217,10 @@ export class AuthService {
     tier: LicenseTier,
     sessionId: string,
     meta: { platform?: string; app_version?: string; deviceName?: string; ipAddress?: string }
-  ): Promise<void> {
+  ): Promise<string | null> {
     const isWeb = meta.platform === WEB_PLATFORM;
 
-    await this.db.$transaction(async (tx) => {
+    return this.db.$transaction(async (tx) => {
       await tx.$queryRaw`SELECT id FROM "User" WHERE id = ${userId} FOR UPDATE`;
 
       if (!isWeb) {
@@ -245,7 +255,7 @@ export class AuthService {
       // Re-login on the same device reactivates its session. A different account logging in
       // on the same device takes the session over; the previous owner's token then fails
       // authGuard's ownership check and is treated as revoked.
-      await tx.session.upsert({
+      const session = await tx.session.upsert({
         where: { sessionId },
         update: {
           userId,
@@ -269,6 +279,7 @@ export class AuthService {
           lastSeenAt: new Date(),
         },
       });
+      return session.platform;
     });
   }
 
@@ -303,7 +314,7 @@ export class AuthService {
 
     const sessionId = dto.session_id || dto.sessionId || crypto.randomUUID();
     const license = resolveEffectiveLicense(user.license);
-    await this.bindSession(user.id, user.email, license.tier, sessionId, {
+    const sessionPlatform = await this.bindSession(user.id, user.email, license.tier, sessionId, {
       platform: dto.platform || WEB_PLATFORM,
       app_version: dto.app_version,
       deviceName: dto.deviceName,
@@ -313,7 +324,7 @@ export class AuthService {
     const gracePeriodUntil = newGracePeriodUntil();
     return {
       status: 'success',
-      token: this.signToken(user, license, sessionId, gracePeriodUntil),
+      token: this.signToken(user, license, sessionId, sessionPlatform, gracePeriodUntil),
       user: {
         id: user.id,
         name: user.name || user.email.split('@')[0],
@@ -361,12 +372,12 @@ export class AuthService {
     }
 
     const license = resolveEffectiveLicense(user.license);
-    await this.bindSession(user.id, user.email, license.tier, clientSessionId, dto);
+    const sessionPlatform = await this.bindSession(user.id, user.email, license.tier, clientSessionId, dto);
 
     const gracePeriodUntil = newGracePeriodUntil();
     return {
       status: 'success',
-      token: this.signToken(user, license, clientSessionId, gracePeriodUntil),
+      token: this.signToken(user, license, clientSessionId, sessionPlatform, gracePeriodUntil),
       user: {
         id: user.id,
         name: user.name || user.email.split('@')[0],
@@ -439,7 +450,7 @@ export class AuthService {
 
     return {
       status: 'success',
-      token: this.signToken(user, license, sessionId, gracePeriodUntil),
+      token: this.signToken(user, license, sessionId, session.platform, gracePeriodUntil),
       isRevoked: false,
       grace_period_until: gracePeriodUntil,
       license: toLicensePayload(license, gracePeriodUntil),
@@ -460,7 +471,14 @@ export class AuthService {
       throw new NotFoundError('Pengguna tidak ditemukan');
     }
 
-    return this.signToken(user, resolveEffectiveLicense(user.license), sessionId, newGracePeriodUntil());
+    const session = await this.db.session.findUnique({ where: { sessionId } });
+    return this.signToken(
+      user,
+      resolveEffectiveLicense(user.license),
+      sessionId,
+      session?.platform ?? null,
+      newGracePeriodUntil()
+    );
   }
 
   /**
