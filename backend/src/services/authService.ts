@@ -3,6 +3,7 @@ import crypto from 'node:crypto';
 import { PrismaClient, Prisma, LicenseTier, License } from '@prisma/client';
 import { prisma } from '../config/database';
 import { getDefaultCryptoSigner } from '../utils/cryptoSigner';
+import { WEB_PLATFORM, expireOrphanedWebSessions } from './webSessions';
 import {
   BadRequestError,
   UnauthorizedError,
@@ -99,8 +100,7 @@ type LicenseFields = Pick<
 const DAY_MS = 24 * 60 * 60 * 1000;
 const GRACE_PERIOD_MS = 7 * DAY_MS;
 
-/** Sessions created from the web portal. They are revocable but do not use desktop device slots. */
-export const WEB_PLATFORM = 'web';
+export { WEB_PLATFORM };
 
 const CONCURRENT_SESSION_LIMITS: Record<LicenseTier, number> = {
   FREE: 1,
@@ -222,6 +222,8 @@ export class AuthService {
 
     return this.db.$transaction(async (tx) => {
       await tx.$queryRaw`SELECT id FROM "User" WHERE id = ${userId} FOR UPDATE`;
+
+      await expireOrphanedWebSessions(tx, userId, sessionId);
 
       if (!isWeb) {
         const maxSlots = CONCURRENT_SESSION_LIMITS[tier] || 1;
@@ -472,6 +474,10 @@ export class AuthService {
     }
 
     const session = await this.db.session.findUnique({ where: { sessionId } });
+    if (session) {
+      // Issuing a token is activity; web-session cleanup relies on lastSeenAt tracking every token.
+      await this.db.session.update({ where: { id: session.id }, data: { lastSeenAt: new Date() } });
+    }
     // Fail closed: this token is only issued for a session authGuard already validated, so a
     // missing row is anomalous — sign Free (as for a web session) instead of paid entitlements.
     const sessionPlatform = session ? session.platform : WEB_PLATFORM;

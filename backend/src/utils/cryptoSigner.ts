@@ -104,6 +104,9 @@ export function ensureKeyFilesExist(
     return keypair;
 }
 
+/** Lifetime of a signed license token. Session cleanup relies on this same value. */
+export const LICENSE_TOKEN_TTL_DAYS = 30;
+
 /**
  * Production RS256 Asymmetric License Token Signer & Verifier.
  */
@@ -145,6 +148,8 @@ export class CryptoSigner {
 
     /**
      * Signs a license token payload with RS256 private key.
+     * Production callers must keep the default lifetime (LICENSE_TOKEN_TTL_DAYS): web-session
+     * cleanup assumes no token outlives it. `expiresIn` exists for tests only.
      */
     public signLicenseToken(
         payload: LicenseTokenPayload,
@@ -154,7 +159,7 @@ export class CryptoSigner {
             algorithm: 'RS256',
             issuer: this.issuer,
             jwtid: crypto.randomUUID(),
-            expiresIn: (options.expiresIn as any) || '30d'
+            expiresIn: (options.expiresIn as any) || `${LICENSE_TOKEN_TTL_DAYS}d`
         };
 
         return jwt.sign(payload, this.privateKeyPem, signOptions);
