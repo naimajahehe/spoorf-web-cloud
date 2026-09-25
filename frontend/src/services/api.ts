@@ -1,4 +1,5 @@
 import axios, { AxiosError, InternalAxiosRequestConfig } from 'axios';
+import { TOKEN_KEY, clearStoredAuth } from './authStorage';
 
 // Dev falls back to the local API; production builds use VITE_API_URL or a same-origin /v1 proxy.
 const baseURL = import.meta.env.VITE_API_URL || (import.meta.env.DEV ? 'http://localhost:4000/v1' : '/v1');
@@ -17,7 +18,7 @@ export const api = axios.create({
 // Request interceptor: attaches Bearer token if present
 api.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
-    const token = localStorage.getItem('spoorf_cloud_token');
+    const token = localStorage.getItem(TOKEN_KEY);
     if (token && config.headers) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -33,9 +34,7 @@ api.interceptors.response.use(
   (response) => response,
   (error: AxiosError) => {
     if (error.response && error.response.status === 401) {
-      localStorage.removeItem('spoorf_cloud_token');
-      localStorage.removeItem('spoorf_cloud_user');
-      localStorage.removeItem('spoorf_cloud_license');
+      clearStoredAuth();
 
       if (
         typeof window !== 'undefined' &&

@@ -2,6 +2,7 @@ import React, { createContext, useContext, useState, useEffect, useCallback, use
 import axios from 'axios';
 import api from '../services/api';
 import { getWebSessionPayload } from '../services/webSession';
+import { TOKEN_KEY, USER_KEY, LICENSE_KEY, clearStoredAuth } from '../services/authStorage';
 import { UserProfile, LicenseInfo, AuthResponse } from '../types/auth';
 
 export interface AuthContextType {
@@ -17,10 +18,6 @@ export interface AuthContextType {
 }
 
 export const AuthContext = createContext<AuthContextType | undefined>(undefined);
-
-const TOKEN_KEY = 'spoorf_cloud_token';
-const USER_KEY = 'spoorf_cloud_user';
-const LICENSE_KEY = 'spoorf_cloud_license';
 
 interface AuthProviderProps {
   children: React.ReactNode;
@@ -164,12 +161,15 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   );
 
   const logout = useCallback((): void => {
-    // Notify server of logout (fire and forget)
-    api.post('/auth/logout').catch(() => {});
+    // Revoke the server session (fire and forget). The token is passed explicitly because
+    // axios request interceptors run after this function has already cleared storage.
+    const currentToken = localStorage.getItem(TOKEN_KEY);
+    if (currentToken) {
+      // `{}` rather than null: axios would send the JSON literal "null", which express.json rejects.
+      api.post('/auth/logout', {}, { headers: { Authorization: `Bearer ${currentToken}` } }).catch(() => {});
+    }
 
-    localStorage.removeItem(TOKEN_KEY);
-    localStorage.removeItem(USER_KEY);
-    localStorage.removeItem(LICENSE_KEY);
+    clearStoredAuth();
 
     setToken(null);
     setUser(null);
@@ -201,9 +201,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           return;
         }
         console.error('[AuthContext] Sesi kedaluwarsa atau token tidak valid:', error);
-        localStorage.removeItem(TOKEN_KEY);
-        localStorage.removeItem(USER_KEY);
-        localStorage.removeItem(LICENSE_KEY);
+        clearStoredAuth();
         setToken(null);
         setUser(null);
         setLicense(null);
