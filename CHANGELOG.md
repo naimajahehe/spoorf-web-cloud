@@ -6,11 +6,14 @@ All notable changes to the Spoorf Cloud ecosystem will be documented in this fil
 
 ### Session Hygiene: Expire Orphaned Web Sessions
 - **Background**: the web portal replaces its session id whenever it drops an expired token (v0.0.5), so a web session whose token simply ran out was never logged out and stayed listed as active (code review follow-up on v0.0.5).
-- **Sessions (`authService.ts`)**:
-  - `bindSession`, under the existing per-user lock, marks the account's web sessions idle longer than the token lifetime as revoked ("Sesi web kedaluwarsa: token berakhir tanpa logout."). No token issued for such a session can still be valid. Desktop sessions are untouched and stay governed by the device-slot logic.
-  - `issueSessionToken` refreshes `lastSeenAt`, so every token issuance is tracked and a freshly rotated session is never treated as idle.
-- **Crypto (`cryptoSigner.ts`)**: the 30-day token lifetime is a single exported constant, `LICENSE_TOKEN_TTL_DAYS`, shared by the signer and the cleanup.
-- **Testing**: new `unit_web_session_expiry.test.ts` (4). Backend: 72/72 green.
+- **Sessions (`webSessions.ts`, `authService.ts`, `sessionService.ts`)**:
+  - New `expireOrphanedWebSessions()` marks the account's web sessions that have gone without a new token for longer than the token lifetime (plus a 1-hour margin) as revoked ("Sesi web kedaluwarsa: token berakhir tanpa logout."). No token issued for such a session can still be valid.
+  - It runs on login/register (`bindSession`) and when listing sessions (`GET /v1/sessions`), both under the same per-user `User` row lock, so a browser that is still signed in never lists another browser's dead session as active.
+  - Desktop sessions (any other platform, including `null`) are untouched and stay governed by the device-slot logic.
+  - `issueSessionToken` refreshes `lastSeenAt`, so every token issuance (login/register, heartbeat, redeem rotation) is reflected in `lastSeenAt`.
+- **Crypto (`cryptoSigner.ts`)**: the 30-day token lifetime is a single exported constant, `LICENSE_TOKEN_TTL_DAYS`, shared by the signer and the cleanup; `signLicenseToken`'s `expiresIn` override is documented as test-only.
+- **Testing**: new `unit_web_session_expiry.test.ts` (7), including the multi-browser listing case, the margin boundary, and guards for `platform: null` desktop sessions and heartbeat `lastSeenAt`. Backend: 75/75 green.
+- **Known limit**: `revokeSession`/`revokeAllSessions` do not take the per-user lock yet (pre-existing; a rare deadlock with a concurrent login is possible; Postgres aborts one side and that request fails and must be retried).
 
 ## [v0.0.5] - 2026-09-25
 

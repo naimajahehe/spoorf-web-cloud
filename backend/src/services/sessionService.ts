@@ -2,6 +2,7 @@ import { PrismaClient, Session } from '@prisma/client';
 import { prisma } from '../config/database';
 import { NotFoundError } from '../errors/AppError';
 import { logger } from '../utils/logger';
+import { expireOrphanedWebSessions } from './webSessions';
 
 export interface EnrichedSession extends Session {
   is_online: boolean;
@@ -30,12 +31,18 @@ export class SessionService {
 
   /**
    * Retrieves all device sessions belonging to a user, sorted by lastSeenAt DESC,
-   * enriched with the computed `is_online` status.
+   * enriched with the computed `is_online` status. Orphaned web sessions are expired first,
+   * so a browser that is still signed in never lists another browser's dead session as active.
    */
   public async getUserSessions(userId: string): Promise<EnrichedSession[]> {
-    const sessions = await this.db.session.findMany({
-      where: { userId },
-      orderBy: { lastSeenAt: 'desc' },
+    const sessions = await this.db.$transaction(async (tx) => {
+      // Same per-user lock as login (bindSession), so session writes for an account stay ordered.
+      await tx.$queryRaw`SELECT id FROM "User" WHERE id = ${userId} FOR UPDATE`;
+      await expireOrphanedWebSessions(tx, userId);
+      return tx.session.findMany({
+        where: { userId },
+        orderBy: { lastSeenAt: 'desc' },
+      });
     });
 
     const now = Date.now();

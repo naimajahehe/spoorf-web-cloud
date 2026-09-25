@@ -2,7 +2,8 @@ import bcrypt from 'bcryptjs';
 import crypto from 'node:crypto';
 import { PrismaClient, Prisma, LicenseTier, License } from '@prisma/client';
 import { prisma } from '../config/database';
-import { getDefaultCryptoSigner, LICENSE_TOKEN_TTL_DAYS } from '../utils/cryptoSigner';
+import { getDefaultCryptoSigner } from '../utils/cryptoSigner';
+import { WEB_PLATFORM, expireOrphanedWebSessions } from './webSessions';
 import {
   BadRequestError,
   UnauthorizedError,
@@ -99,8 +100,7 @@ type LicenseFields = Pick<
 const DAY_MS = 24 * 60 * 60 * 1000;
 const GRACE_PERIOD_MS = 7 * DAY_MS;
 
-/** Sessions created from the web portal. They are revocable but do not use desktop device slots. */
-export const WEB_PLATFORM = 'web';
+export { WEB_PLATFORM };
 
 const CONCURRENT_SESSION_LIMITS: Record<LicenseTier, number> = {
   FREE: 1,
@@ -223,23 +223,7 @@ export class AuthService {
     return this.db.$transaction(async (tx) => {
       await tx.$queryRaw`SELECT id FROM "User" WHERE id = ${userId} FOR UPDATE`;
 
-      // The web portal replaces its session id whenever it drops an expired token, so such a web
-      // session is never logged out. Once it has been idle longer than the token lifetime no token
-      // issued for it can still be valid; expire it so it stops appearing as an active session.
-      await tx.session.updateMany({
-        where: {
-          userId,
-          platform: WEB_PLATFORM,
-          isRevoked: false,
-          sessionId: { not: sessionId },
-          lastSeenAt: { lt: new Date(Date.now() - LICENSE_TOKEN_TTL_DAYS * DAY_MS) },
-        },
-        data: {
-          isRevoked: true,
-          revokedAt: new Date(),
-          revokedReason: 'Sesi web kedaluwarsa: token berakhir tanpa logout.',
-        },
-      });
+      await expireOrphanedWebSessions(tx, userId, sessionId);
 
       if (!isWeb) {
         const maxSlots = CONCURRENT_SESSION_LIMITS[tier] || 1;

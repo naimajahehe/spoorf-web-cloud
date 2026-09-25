@@ -148,6 +148,8 @@ export class CryptoSigner {
 
     /**
      * Signs a license token payload with RS256 private key.
+     * Production callers must keep the default lifetime (LICENSE_TOKEN_TTL_DAYS): web-session
+     * cleanup assumes no token outlives it. `expiresIn` exists for tests only.
      */
     public signLicenseToken(
         payload: LicenseTokenPayload,
