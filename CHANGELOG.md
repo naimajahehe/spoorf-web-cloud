@@ -2,6 +2,16 @@
 
 All notable changes to the Spoorf Cloud ecosystem will be documented in this file.
 
+## [v0.0.6] - 2026-09-25
+
+### Session Hygiene: Expire Orphaned Web Sessions
+- **Background**: the web portal replaces its session id whenever it drops an expired token (v0.0.5), so a web session whose token simply ran out was never logged out and stayed listed as active (code review follow-up on v0.0.5).
+- **Sessions (`authService.ts`)**:
+  - `bindSession`, under the existing per-user lock, marks the account's web sessions idle longer than the token lifetime as revoked ("Sesi web kedaluwarsa: token berakhir tanpa logout."). No token issued for such a session can still be valid. Desktop sessions are untouched and stay governed by the device-slot logic.
+  - `issueSessionToken` refreshes `lastSeenAt`, so every token issuance is tracked and a freshly rotated session is never treated as idle.
+- **Crypto (`cryptoSigner.ts`)**: the 30-day token lifetime is a single exported constant, `LICENSE_TOKEN_TTL_DAYS`, shared by the signer and the cleanup.
+- **Testing**: new `unit_web_session_expiry.test.ts` (4). Backend: 72/72 green.
+
 ## [v0.0.5] - 2026-09-25
 
 ### Security Hardening: Web Session Entitlements, Voucher Stacking, Signing Key Safety & Honest Downloads

@@ -257,6 +257,7 @@ Authoritative specification for client integration (Desktop NetCut Sentinel & We
 - `POST /v1/sessions/:id/revoke` → cabut satu sesi milik pemanggil (berdasarkan `id` atau `sessionId`); sesi milik akun lain → `404 NOT_FOUND`.
 - `POST /v1/sessions/revoke-all` → cabut semua sesi aktif pemanggil **kecuali** sesi yang sedang dipakai untuk request ini. Response: `{ "success": true, "revokedCount": 2, "message": "..." }`.
 - Desktop mendeteksi pencabutan pada heartbeat berikutnya (`401 SESSION_REVOKED`).
+- Sejak v0.0.6, setiap login menandai sesi `web` milik akun yang sama yang tidak aktif lebih lama dari masa berlaku token (30 hari) sebagai dicabut dengan `revokedReason` "Sesi web kedaluwarsa: token berakhir tanpa logout.". Sesi desktop tidak terpengaruh.
 
 ---
 
