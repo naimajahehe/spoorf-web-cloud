@@ -85,4 +85,17 @@ describe('License Hardening Suite (Web Session Claims, Voucher Stacking)', () =>
     assert.equal(claims.tier, 'pro');
     assert.equal(claims.canThrottle, true);
   });
+
+  test('5. concurrent redemptions by one account each extend the license', async () => {
+    const user = await prisma.user.findUniqueOrThrow({ where: { email: stackEmail } });
+    const keys = [1, 2, 3].map((i) => `${voucherPrefix}-STACK-${i}`);
+    await prisma.licenseKey.createMany({ data: keys.map((key) => ({ key, tier: LicenseTier.PRO, durationDays: 30 })) });
+
+    const startedAt = Date.now();
+    await Promise.all(keys.map((key) => authService.redeemLicenseKey(user.id, key)));
+
+    const license = await prisma.license.findUniqueOrThrow({ where: { userId: user.id } });
+    const addedDays = Math.round((license.expiresAt!.getTime() - startedAt) / DAY_MS);
+    assert.equal(addedDays, 90, 'each of the 3 vouchers must add its 30 days');
+  });
 });

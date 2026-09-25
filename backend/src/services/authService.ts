@@ -512,11 +512,16 @@ export class AuthService {
   /**
    * Redeem license voucher key (e.g. "PRO-SENTINEL-XXXX") to upgrade account tier.
    * The voucher is claimed atomically, so concurrent requests can use it only once.
+   * Redemptions for one account are serialized so each extends the license it just read.
    */
   public async redeemLicenseKey(userId: string, rawKey: string): Promise<LicensePayload> {
     const cleanKey = rawKey.trim().toUpperCase();
 
     const updated = await this.db.$transaction(async (tx) => {
+      // Same per-user lock as bindSession: without it, parallel redemptions read the same
+      // expiresAt and the last write discards the other vouchers' days.
+      await tx.$queryRaw`SELECT id FROM "User" WHERE id = ${userId} FOR UPDATE`;
+
       const voucher = await tx.licenseKey.findUnique({
         where: { key: cleanKey },
       });
