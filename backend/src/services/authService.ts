@@ -2,7 +2,7 @@ import bcrypt from 'bcryptjs';
 import crypto from 'node:crypto';
 import { PrismaClient, Prisma, LicenseTier, License } from '@prisma/client';
 import { prisma } from '../config/database';
-import { getDefaultCryptoSigner } from '../utils/cryptoSigner';
+import { getDefaultCryptoSigner, LICENSE_TOKEN_TTL_DAYS } from '../utils/cryptoSigner';
 import {
   BadRequestError,
   UnauthorizedError,
@@ -222,6 +222,24 @@ export class AuthService {
 
     return this.db.$transaction(async (tx) => {
       await tx.$queryRaw`SELECT id FROM "User" WHERE id = ${userId} FOR UPDATE`;
+
+      // The web portal replaces its session id whenever it drops an expired token, so such a web
+      // session is never logged out. Once it has been idle longer than the token lifetime no token
+      // issued for it can still be valid; expire it so it stops appearing as an active session.
+      await tx.session.updateMany({
+        where: {
+          userId,
+          platform: WEB_PLATFORM,
+          isRevoked: false,
+          sessionId: { not: sessionId },
+          lastSeenAt: { lt: new Date(Date.now() - LICENSE_TOKEN_TTL_DAYS * DAY_MS) },
+        },
+        data: {
+          isRevoked: true,
+          revokedAt: new Date(),
+          revokedReason: 'Sesi web kedaluwarsa: token berakhir tanpa logout.',
+        },
+      });
 
       if (!isWeb) {
         const maxSlots = CONCURRENT_SESSION_LIMITS[tier] || 1;
@@ -472,6 +490,10 @@ export class AuthService {
     }
 
     const session = await this.db.session.findUnique({ where: { sessionId } });
+    if (session) {
+      // Issuing a token is activity; web-session cleanup relies on lastSeenAt tracking every token.
+      await this.db.session.update({ where: { id: session.id }, data: { lastSeenAt: new Date() } });
+    }
     // Fail closed: this token is only issued for a session authGuard already validated, so a
     // missing row is anomalous — sign Free (as for a web session) instead of paid entitlements.
     const sessionPlatform = session ? session.platform : WEB_PLATFORM;
