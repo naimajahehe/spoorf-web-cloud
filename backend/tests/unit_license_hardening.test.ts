@@ -98,4 +98,11 @@ describe('License Hardening Suite (Web Session Claims, Voucher Stacking)', () =>
     const addedDays = Math.round((license.expiresAt!.getTime() - startedAt) / DAY_MS);
     assert.equal(addedDays, 90, 'each of the 3 vouchers must add its 30 days');
   });
+
+  test('6. issueSessionToken fails closed to Free when the session row is missing', async () => {
+    // authGuard always validates the session before redeem, so a missing row is anomalous;
+    // the token must not grant paid entitlements in that case.
+    const token = await authService.issueSessionToken(paidUserId, 'no-such-session-id');
+    assert.equal(claimsOf(token).tier, 'free');
+  });
 });

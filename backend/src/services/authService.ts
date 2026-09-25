@@ -472,11 +472,14 @@ export class AuthService {
     }
 
     const session = await this.db.session.findUnique({ where: { sessionId } });
+    // Fail closed: this token is only issued for a session authGuard already validated, so a
+    // missing row is anomalous — sign Free (as for a web session) instead of paid entitlements.
+    const sessionPlatform = session ? session.platform : WEB_PLATFORM;
     return this.signToken(
       user,
       resolveEffectiveLicense(user.license),
       sessionId,
-      session?.platform ?? null,
+      sessionPlatform,
       newGracePeriodUntil()
     );
   }
